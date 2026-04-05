@@ -1,0 +1,4 @@
+[2026-04-05 01:05:36.784] [START] Servidor UDP iniciado
+[2026-04-05 01:05:36.784] [INFO] Archivo de audio: audio_2026-04-05_01-05-36.wav
+[2026-04-05 01:05:36.785] [INFO] Archivo de logs: server_log_2026-04-05_01-05-36.txt
+[2026-04-05 01:05:36.785] [INFO] Jitter buffer: 25 paquetes (~250 ms)
