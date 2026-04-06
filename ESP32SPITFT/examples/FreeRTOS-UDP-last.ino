@@ -18,6 +18,9 @@ TFT_eSPI_Button btnSend;
 
 WiFiUDP udp;
 
+volatile bool wifiConnectRequested = false;
+volatile bool sendHelloRequested = false;
+
 // Estados
 enum Status { DISCONNECTED, WIFI_CONNECTED, UDP_CONNECTED };
 Status wifiStatus = DISCONNECTED;
@@ -124,29 +127,35 @@ void sendUDP(String msg) {
 
 // Tarea de touch y botones
 void taskTouch(void *pvParameters) {
+  bool touchWasDown = false;
+
   while (1) {
     TouchPoint p = ts.getTouch();
     int x = constrain(map(p.y, 220, 20, 0, 239), 0, 239);
     int y = constrain(map(p.x, 20, 299, 0, 319), 0, 319);
 
-    if (p.zRaw > 200) {
-      if (btnWifi.contains(x,y)) {
+    bool touchDown = (p.zRaw > 200);
+
+    if (touchDown && !touchWasDown) {
+      if (btnWifi.contains(x, y)) {
         btnWifi.drawButton(true);
-        connectWiFi();
-        vTaskDelay(300 / portTICK_PERIOD_MS);
-        btnWifi.drawButton(false);
+        wifiConnectRequested = true;
       }
-      if (btnSend.contains(x,y)) {
+      else if (btnSend.contains(x, y)) {
         btnSend.drawButton(true);
-        sendUDP("HELLO_FROM_ESP32 | t=" + String(millis()));
-        vTaskDelay(300 / portTICK_PERIOD_MS);
-        btnSend.drawButton(false);
+        sendHelloRequested = true;
       }
     }
+
+    if (!touchDown && touchWasDown) {
+      btnWifi.drawButton(false);
+      btnSend.drawButton(false);
+    }
+
+    touchWasDown = touchDown;
     vTaskDelay(20 / portTICK_PERIOD_MS);
   }
 }
-
 // Tarea de UDP
 void taskUDP(void *pvParameters) {
   while (1) {
