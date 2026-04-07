@@ -1,0 +1,14 @@
+[2026-04-07 17:40:21.766] [START] Connected to xAI realtime
+[2026-04-07 17:40:21.766] [INFO] Output WAV file: audio_out_2026-04-07_17-40-20.wav
+[2026-04-07 17:40:21.767] [INFO] Log file: bridge_log_2026-04-07_17-40-20.txt
+[2026-04-07 17:40:21.767] [START] UDP server started
+[2026-04-07 17:40:21.767] [INFO] UDP port: 5000
+[2026-04-07 17:40:21.767] [INFO] Jitter buffer: 25 packets (~250 ms)
+[2026-04-07 17:40:22.233] [XAI] Session updated
+[2026-04-07 17:48:52.037] [ERROR] websocket receiver error: sent 1011 (internal error) keepalive ping timeout; no close frame received
+[2026-04-07 17:49:15.327] [INIT] First packet received -> seq=0
+[2026-04-07 17:49:15.329] [ERROR] Unexpected error: sent 1011 (internal error) keepalive ping timeout; no close frame received
+[2026-04-07 17:49:15.330] [SUMMARY] === END OF TRANSMISSION ===
+[2026-04-07 17:49:15.330] [SUMMARY] Output saved to: audio_out_2026-04-07_17-40-20.wav
+[2026-04-07 17:49:15.330] [SUMMARY] Total packets received: 2
+[2026-04-07 17:49:15.330] [SUMMARY] Total packets lost: 0 (0.00%)
