@@ -1,0 +1,234 @@
+[2026-04-10 14:42:54.233] [START] Connected to xAI realtime | input_rate=16000 | output_rate=16000
+[2026-04-10 14:42:54.234] [INFO] Output WAV file: audio_out_2026-04-10_14-42-52.wav
+[2026-04-10 14:42:54.234] [INFO] Log file: bridge_log_2026-04-10_14-42-52.txt
+[2026-04-10 14:42:54.234] [CONFIG] Bridge config | input_rate=16000 | output_rate=16000 | samples_per_packet=160 | packet_audio_size=320
+[2026-04-10 14:42:54.235] [START] UDP server started
+[2026-04-10 14:42:54.235] [INFO] UDP port: 9999
+[2026-04-10 14:42:54.235] [INFO] Jitter buffer: 25 packets (~250 ms)
+[2026-04-10 14:42:54.574] [XAI] Session updated
+[2026-04-10 14:43:05.215] [INIT] First packet received -> seq=0
+[2026-04-10 14:43:07.949] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 14:43:07.950] [TURN] Input turn closed | flushed=0 | dropped_out_of_order=0
+[2026-04-10 14:43:07.951] [TURN] COMMIT sent to xAI
+[2026-04-10 14:43:07.951] [TURN] New audio turn #1 -> initial seq=235
+[2026-04-10 14:43:08.285] [XAI] xAI confirmed commit
+[2026-04-10 14:43:09.439] [USER] User transcription: Hola hola, ¿cómo estás?
+[2026-04-10 14:43:09.729] [AUDIO] Output audio chunk #1 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:43:09.739] [AUDIO] Output audio chunk #2 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:43:09.740] [AUDIO] Output audio chunk #3 | bytes=24320 | samples=12160 | ~760.00 ms
+[2026-04-10 14:43:09.993] [AUDIO] Output audio chunk #4 | bytes=30720 | samples=15360 | ~960.00 ms
+[2026-04-10 14:43:10.313] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:43:10.450] [AUDIO] Output audio chunk #5 | bytes=43520 | samples=21760 | ~1360.00 ms
+[2026-04-10 14:43:10.527] [ASSISTANT] Response audio completed | chunks=7 | bytes=189120 | samples=94560 | ~5910.00 ms
+[2026-04-10 14:43:10.892] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:43:11.682] [UDP] UDP audio paced send: 26 chunks of 960 bytes
+[2026-04-10 14:43:12.652] [UDP] UDP audio paced send: 32 chunks of 960 bytes
+[2026-04-10 14:43:14.044] [UDP] UDP audio paced send: 46 chunks of 960 bytes
+[2026-04-10 14:43:15.734] [UDP] UDP audio paced send: 56 chunks of 960 bytes
+[2026-04-10 14:43:15.804] [UDP] UDP audio paced send: 2 chunks of 960 bytes
+[2026-04-10 14:43:15.806] [UDP] UDP audio end marker sent to ('10.19.187.137', 9999)
+[2026-04-10 14:43:15.807] [XAI] Response completed | tokens=422
+[2026-04-10 14:43:15.807] [INFO] Assistant response: ¡Hola! Estoy genial, como siempre listo para ayudar. ¿En qué puedo echarte una mano hoy?
+[2026-04-10 14:43:15.807] [UDP] UDP target addr: ('10.19.187.137', 9999)
+[2026-04-10 14:43:15.808] [UDP] UDP JSON sent to ('10.19.187.137', 9999): {"type": "assistant_response", "value": "¡Hola! Estoy genial, como siempre listo para ayudar. ¿En qué puedo echarte una mano hoy?", "final": true, "timestamp": "2026-04-10T14:43:15"}
+[2026-04-10 14:43:31.296] [LOSS] [LOSS] seq 236 lost -> filled with silence
+[2026-04-10 14:43:31.356] [STAT] [STAT] seq=301 | buf=0 | rec=300 | lost=1 (0.33%)
+[2026-04-10 14:43:32.234] [LOSS] [LOSS] seq 436 lost -> filled with silence
+[2026-04-10 14:43:33.669] [STAT] [STAT] seq=602 | buf=0 | rec=600 | lost=2 (0.33%)
+[2026-04-10 14:43:34.881] [LOSS] [LOSS] seq 651 lost -> filled with silence
+[2026-04-10 14:43:36.169] [LOSS] [LOSS] seq 760 lost -> filled with silence
+[2026-04-10 14:43:37.306] [STAT] [STAT] seq=904 | buf=0 | rec=900 | lost=4 (0.44%)
+[2026-04-10 14:43:45.256] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 14:43:45.265] [TURN] Input turn closed | flushed=0 | dropped_out_of_order=0
+[2026-04-10 14:43:45.266] [TURN] COMMIT sent to xAI
+[2026-04-10 14:43:45.742] [XAI] xAI confirmed commit
+[2026-04-10 14:43:46.152] [USER] User transcription: ¿Qué es lo fundamental para ordenar paquetes en una comunicación UDP?
+[2026-04-10 14:43:46.771] [AUDIO] Output audio chunk #1 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:43:46.781] [AUDIO] Output audio chunk #2 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:43:46.952] [AUDIO] Output audio chunk #3 | bytes=23680 | samples=11840 | ~740.00 ms
+[2026-04-10 14:43:47.142] [AUDIO] Output audio chunk #4 | bytes=30720 | samples=15360 | ~960.00 ms
+[2026-04-10 14:43:47.351] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:43:47.584] [AUDIO] Output audio chunk #5 | bytes=43520 | samples=21760 | ~1360.00 ms
+[2026-04-10 14:43:47.932] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:43:48.692] [UDP] UDP audio paced send: 25 chunks of 960 bytes
+[2026-04-10 14:43:49.662] [UDP] UDP audio paced send: 32 chunks of 960 bytes
+[2026-04-10 14:43:50.104] [ASSISTANT] Response audio completed | chunks=13 | bytes=525760 | samples=262880 | ~16430.00 ms
+[2026-04-10 14:43:51.052] [UDP] UDP audio paced send: 46 chunks of 960 bytes
+[2026-04-10 14:43:52.621] [UDP] UDP audio paced send: 52 chunks of 960 bytes
+[2026-04-10 14:43:54.402] [UDP] UDP audio paced send: 59 chunks of 960 bytes
+[2026-04-10 14:43:56.393] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:43:58.384] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:44:00.373] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:44:02.363] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:44:03.417] [UDP] UDP audio paced send: 35 chunks of 960 bytes
+[2026-04-10 14:44:03.487] [UDP] UDP audio paced send: 2 chunks of 960 bytes
+[2026-04-10 14:44:03.489] [UDP] UDP audio end marker sent to ('10.19.187.137', 9999)
+[2026-04-10 14:44:03.489] [XAI] Response completed | tokens=1194
+[2026-04-10 14:44:03.489] [INFO] Assistant response: En UDP, que no tiene ordenación nativa, lo fundamental es agregar un número de secuencia (sequence number) a cada paquete. El receptor usa esos números para reordenar los paquetes y detectar pérdidas o duplicados. ¡Simple pero efectivo! ¿Quieres más detalles?
+[2026-04-10 14:44:03.489] [UDP] UDP target addr: ('10.19.187.137', 9999)
+[2026-04-10 14:44:03.490] [UDP] UDP JSON sent to ('10.19.187.137', 9999): {"type": "assistant_response", "value": "En UDP, que no tiene ordenación nativa, lo fundamental es agregar un número de secuencia (sequence number) a cada paquete. El receptor usa esos números para reordenar los paquetes y detectar pérdidas o duplicados. ¡Simple pero efectivo! ¿Quieres más detalles?", "final": true, "timestamp": "2026-04-10T14:44:03"}
+[2026-04-10 14:44:07.207] [TURN] New audio turn #2 -> initial seq=0
+[2026-04-10 14:44:10.724] [STAT] [STAT] seq=298 | buf=0 | rec=1200 | lost=4 (0.33%)
+[2026-04-10 14:44:31.614] [LOSS] [LOSS] seq 516 lost -> filled with silence
+[2026-04-10 14:44:31.652] [LOSS] [LOSS] seq 517 lost -> filled with silence
+[2026-04-10 14:44:31.708] [LOSS] [LOSS] seq 518 lost -> filled with silence
+[2026-04-10 14:44:32.017] [LOSS] [LOSS] seq 519 lost -> filled with silence
+[2026-04-10 14:44:32.028] [LOSS] [LOSS] seq 520 lost -> filled with silence
+[2026-04-10 14:44:32.029] [LOSS] [LOSS] seq 521 lost -> filled with silence
+[2026-04-10 14:44:32.032] [LOSS] [LOSS] seq 522 lost -> filled with silence
+[2026-04-10 14:44:32.034] [LOSS] [LOSS] seq 523 lost -> filled with silence
+[2026-04-10 14:44:32.228] [LOSS] [LOSS] seq 524 lost -> filled with silence
+[2026-04-10 14:44:32.239] [LOSS] [LOSS] seq 525 lost -> filled with silence
+[2026-04-10 14:44:32.241] [LOSS] [LOSS] seq 526 lost -> filled with silence
+[2026-04-10 14:44:32.251] [LOSS] [LOSS] seq 527 lost -> filled with silence
+[2026-04-10 14:44:32.306] [LOSS] [LOSS] seq 528 lost -> filled with silence
+[2026-04-10 14:44:32.367] [LOSS] [LOSS] seq 529 lost -> filled with silence
+[2026-04-10 14:44:32.432] [LOSS] [LOSS] seq 530 lost -> filled with silence
+[2026-04-10 14:44:32.487] [LOSS] [LOSS] seq 531 lost -> filled with silence
+[2026-04-10 14:44:32.518] [STAT] [STAT] seq=532 | buf=82 | rec=1500 | lost=20 (1.33%)
+[2026-04-10 14:44:32.637] [LOSS] [LOSS] seq 532 lost -> filled with silence
+[2026-04-10 14:44:32.641] [LOSS] [LOSS] seq 533 lost -> filled with silence
+[2026-04-10 14:44:32.663] [LOSS] [LOSS] seq 534 lost -> filled with silence
+[2026-04-10 14:44:32.957] [LOSS] [LOSS] seq 535 lost -> filled with silence
+[2026-04-10 14:44:32.969] [LOSS] [LOSS] seq 536 lost -> filled with silence
+[2026-04-10 14:44:32.971] [LOSS] [LOSS] seq 537 lost -> filled with silence
+[2026-04-10 14:44:32.973] [LOSS] [LOSS] seq 538 lost -> filled with silence
+[2026-04-10 14:44:32.974] [LOSS] [LOSS] seq 539 lost -> filled with silence
+[2026-04-10 14:44:33.305] [LOSS] [LOSS] seq 540 lost -> filled with silence
+[2026-04-10 14:44:33.316] [LOSS] [LOSS] seq 541 lost -> filled with silence
+[2026-04-10 14:44:33.319] [LOSS] [LOSS] seq 542 lost -> filled with silence
+[2026-04-10 14:44:33.321] [LOSS] [LOSS] seq 543 lost -> filled with silence
+[2026-04-10 14:44:33.323] [LOSS] [LOSS] seq 544 lost -> filled with silence
+[2026-04-10 14:44:33.324] [LOSS] [LOSS] seq 545 lost -> filled with silence
+[2026-04-10 14:44:33.377] [LOSS] [LOSS] seq 546 lost -> filled with silence
+[2026-04-10 14:44:33.439] [LOSS] [LOSS] seq 547 lost -> filled with silence
+[2026-04-10 14:44:33.512] [LOSS] [LOSS] seq 548 lost -> filled with silence
+[2026-04-10 14:44:33.660] [LOSS] [LOSS] seq 549 lost -> filled with silence
+[2026-04-10 14:44:33.672] [LOSS] [LOSS] seq 550 lost -> filled with silence
+[2026-04-10 14:44:33.683] [LOSS] [LOSS] seq 551 lost -> filled with silence
+[2026-04-10 14:44:33.736] [LOSS] [LOSS] seq 552 lost -> filled with silence
+[2026-04-10 14:44:34.157] [LOSS] [LOSS] seq 553 lost -> filled with silence
+[2026-04-10 14:44:34.169] [LOSS] [LOSS] seq 554 lost -> filled with silence
+[2026-04-10 14:44:34.171] [LOSS] [LOSS] seq 555 lost -> filled with silence
+[2026-04-10 14:44:34.174] [LOSS] [LOSS] seq 556 lost -> filled with silence
+[2026-04-10 14:44:34.177] [LOSS] [LOSS] seq 557 lost -> filled with silence
+[2026-04-10 14:44:34.180] [LOSS] [LOSS] seq 558 lost -> filled with silence
+[2026-04-10 14:44:34.182] [LOSS] [LOSS] seq 559 lost -> filled with silence
+[2026-04-10 14:44:34.224] [LOSS] [LOSS] seq 560 lost -> filled with silence
+[2026-04-10 14:44:34.720] [LOSS] [LOSS] seq 561 lost -> filled with silence
+[2026-04-10 14:44:34.731] [LOSS] [LOSS] seq 562 lost -> filled with silence
+[2026-04-10 14:44:34.733] [LOSS] [LOSS] seq 563 lost -> filled with silence
+[2026-04-10 14:44:34.737] [LOSS] [LOSS] seq 564 lost -> filled with silence
+[2026-04-10 14:44:34.740] [LOSS] [LOSS] seq 565 lost -> filled with silence
+[2026-04-10 14:44:34.742] [LOSS] [LOSS] seq 566 lost -> filled with silence
+[2026-04-10 14:44:34.744] [LOSS] [LOSS] seq 567 lost -> filled with silence
+[2026-04-10 14:44:34.746] [LOSS] [LOSS] seq 568 lost -> filled with silence
+[2026-04-10 14:44:34.756] [LOSS] [LOSS] seq 569 lost -> filled with silence
+[2026-04-10 14:44:35.093] [LOSS] [LOSS] seq 570 lost -> filled with silence
+[2026-04-10 14:44:35.095] [LOSS] [LOSS] seq 571 lost -> filled with silence
+[2026-04-10 14:44:35.096] [LOSS] [LOSS] seq 572 lost -> filled with silence
+[2026-04-10 14:44:35.097] [LOSS] [LOSS] seq 573 lost -> filled with silence
+[2026-04-10 14:44:35.098] [LOSS] [LOSS] seq 574 lost -> filled with silence
+[2026-04-10 14:44:35.120] [LOSS] [LOSS] seq 575 lost -> filled with silence
+[2026-04-10 14:44:35.176] [LOSS] [LOSS] seq 576 lost -> filled with silence
+[2026-04-10 14:44:35.249] [LOSS] [LOSS] seq 577 lost -> filled with silence
+[2026-04-10 14:44:35.306] [LOSS] [LOSS] seq 578 lost -> filled with silence
+[2026-04-10 14:44:35.405] [LOSS] [LOSS] seq 579 lost -> filled with silence
+[2026-04-10 14:44:35.429] [LOSS] [LOSS] seq 580 lost -> filled with silence
+[2026-04-10 14:44:35.511] [LOSS] [LOSS] seq 581 lost -> filled with silence
+[2026-04-10 14:44:35.546] [LOSS] [LOSS] seq 582 lost -> filled with silence
+[2026-04-10 14:44:36.240] [LOSS] [LOSS] seq 583 lost -> filled with silence
+[2026-04-10 14:44:36.253] [LOSS] [LOSS] seq 584 lost -> filled with silence
+[2026-04-10 14:44:36.256] [LOSS] [LOSS] seq 585 lost -> filled with silence
+[2026-04-10 14:44:36.258] [LOSS] [LOSS] seq 586 lost -> filled with silence
+[2026-04-10 14:44:36.261] [LOSS] [LOSS] seq 587 lost -> filled with silence
+[2026-04-10 14:44:36.263] [LOSS] [LOSS] seq 588 lost -> filled with silence
+[2026-04-10 14:44:36.265] [LOSS] [LOSS] seq 589 lost -> filled with silence
+[2026-04-10 14:44:36.266] [LOSS] [LOSS] seq 590 lost -> filled with silence
+[2026-04-10 14:44:36.267] [LOSS] [LOSS] seq 591 lost -> filled with silence
+[2026-04-10 14:44:36.268] [STAT] [STAT] seq=592 | buf=382 | rec=1800 | lost=80 (4.44%)
+[2026-04-10 14:44:36.269] [LOSS] [LOSS] seq 592 lost -> filled with silence
+[2026-04-10 14:44:36.271] [LOSS] [LOSS] seq 593 lost -> filled with silence
+[2026-04-10 14:44:36.550] [LOSS] [LOSS] seq 594 lost -> filled with silence
+[2026-04-10 14:44:36.562] [LOSS] [LOSS] seq 595 lost -> filled with silence
+[2026-04-10 14:44:36.564] [LOSS] [LOSS] seq 596 lost -> filled with silence
+[2026-04-10 14:44:36.567] [LOSS] [LOSS] seq 597 lost -> filled with silence
+[2026-04-10 14:44:36.568] [LOSS] [LOSS] seq 598 lost -> filled with silence
+[2026-04-10 14:44:36.603] [LOSS] [LOSS] seq 599 lost -> filled with silence
+[2026-04-10 14:44:36.661] [LOSS] [LOSS] seq 600 lost -> filled with silence
+[2026-04-10 14:44:36.758] [LOSS] [LOSS] seq 601 lost -> filled with silence
+[2026-04-10 14:44:36.774] [LOSS] [LOSS] seq 602 lost -> filled with silence
+[2026-04-10 14:44:36.843] [LOSS] [LOSS] seq 603 lost -> filled with silence
+[2026-04-10 14:44:37.440] [LOSS] [LOSS] seq 604 lost -> filled with silence
+[2026-04-10 14:44:37.453] [LOSS] [LOSS] seq 605 lost -> filled with silence
+[2026-04-10 14:44:37.455] [LOSS] [LOSS] seq 606 lost -> filled with silence
+[2026-04-10 14:44:37.458] [LOSS] [LOSS] seq 607 lost -> filled with silence
+[2026-04-10 14:44:37.460] [LOSS] [LOSS] seq 608 lost -> filled with silence
+[2026-04-10 14:44:37.462] [LOSS] [LOSS] seq 609 lost -> filled with silence
+[2026-04-10 14:44:37.465] [LOSS] [LOSS] seq 610 lost -> filled with silence
+[2026-04-10 14:44:37.469] [LOSS] [LOSS] seq 611 lost -> filled with silence
+[2026-04-10 14:44:37.471] [LOSS] [LOSS] seq 612 lost -> filled with silence
+[2026-04-10 14:44:37.473] [LOSS] [LOSS] seq 613 lost -> filled with silence
+[2026-04-10 14:44:37.515] [LOSS] [LOSS] seq 614 lost -> filled with silence
+[2026-04-10 14:44:37.898] [LOSS] [LOSS] seq 615 lost -> filled with silence
+[2026-04-10 14:44:37.910] [LOSS] [LOSS] seq 616 lost -> filled with silence
+[2026-04-10 14:44:37.912] [LOSS] [LOSS] seq 617 lost -> filled with silence
+[2026-04-10 14:44:37.914] [LOSS] [LOSS] seq 618 lost -> filled with silence
+[2026-04-10 14:44:37.917] [LOSS] [LOSS] seq 619 lost -> filled with silence
+[2026-04-10 14:44:37.920] [LOSS] [LOSS] seq 620 lost -> filled with silence
+[2026-04-10 14:44:37.942] [LOSS] [LOSS] seq 621 lost -> filled with silence
+[2026-04-10 14:44:38.010] [LOSS] [LOSS] seq 622 lost -> filled with silence
+[2026-04-10 14:44:38.068] [LOSS] [LOSS] seq 623 lost -> filled with silence
+[2026-04-10 14:44:38.425] [LOSS] [LOSS] seq 624 lost -> filled with silence
+[2026-04-10 14:44:38.437] [LOSS] [LOSS] seq 625 lost -> filled with silence
+[2026-04-10 14:44:38.439] [LOSS] [LOSS] seq 626 lost -> filled with silence
+[2026-04-10 14:44:38.441] [LOSS] [LOSS] seq 627 lost -> filled with silence
+[2026-04-10 14:44:38.443] [LOSS] [LOSS] seq 628 lost -> filled with silence
+[2026-04-10 14:44:38.446] [LOSS] [LOSS] seq 629 lost -> filled with silence
+[2026-04-10 14:44:38.489] [LOSS] [LOSS] seq 630 lost -> filled with silence
+[2026-04-10 14:44:38.623] [LOSS] [LOSS] seq 631 lost -> filled with silence
+[2026-04-10 14:44:38.629] [LOSS] [LOSS] seq 632 lost -> filled with silence
+[2026-04-10 14:44:38.670] [LOSS] [LOSS] seq 633 lost -> filled with silence
+[2026-04-10 14:44:38.725] [LOSS] [LOSS] seq 634 lost -> filled with silence
+[2026-04-10 14:44:39.037] [LOSS] [LOSS] seq 635 lost -> filled with silence
+[2026-04-10 14:44:39.048] [LOSS] [LOSS] seq 636 lost -> filled with silence
+[2026-04-10 14:44:39.051] [LOSS] [LOSS] seq 637 lost -> filled with silence
+[2026-04-10 14:44:39.053] [LOSS] [LOSS] seq 638 lost -> filled with silence
+[2026-04-10 14:44:39.055] [LOSS] [LOSS] seq 639 lost -> filled with silence
+[2026-04-10 14:44:39.101] [LOSS] [LOSS] seq 640 lost -> filled with silence
+[2026-04-10 14:44:39.163] [LOSS] [LOSS] seq 641 lost -> filled with silence
+[2026-04-10 14:44:39.220] [LOSS] [LOSS] seq 642 lost -> filled with silence
+[2026-04-10 14:44:39.289] [LOSS] [LOSS] seq 643 lost -> filled with silence
+[2026-04-10 14:44:40.290] [STAT] [STAT] seq=684 | buf=642 | rec=2100 | lost=132 (6.29%)
+[2026-04-10 14:44:42.308] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 14:44:42.317] [TURN] Input turn closed | flushed=0 | dropped_out_of_order=642
+[2026-04-10 14:44:42.318] [TURN] COMMIT sent to xAI
+[2026-04-10 14:44:42.319] [TURN] New audio turn #3 -> initial seq=881
+[2026-04-10 14:44:42.752] [XAI] xAI confirmed commit
+[2026-04-10 14:44:42.762] [USER] User transcription: ¿Qué pasa con el timestamp? ¿Es importante realmente?
+[2026-04-10 14:44:47.080] [AUDIO] Output audio chunk #1 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:44:47.110] [AUDIO] Output audio chunk #2 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:44:47.110] [AUDIO] Output audio chunk #3 | bytes=24320 | samples=12160 | ~760.00 ms
+[2026-04-10 14:44:47.114] [AUDIO] Output audio chunk #4 | bytes=30720 | samples=15360 | ~960.00 ms
+[2026-04-10 14:44:47.452] [AUDIO] Output audio chunk #5 | bytes=43520 | samples=21760 | ~1360.00 ms
+[2026-04-10 14:44:47.680] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:44:48.260] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:44:49.050] [UDP] UDP audio paced send: 26 chunks of 960 bytes
+[2026-04-10 14:44:50.021] [UDP] UDP audio paced send: 32 chunks of 960 bytes
+[2026-04-10 14:44:50.981] [ASSISTANT] Response audio completed | chunks=15 | bytes=703680 | samples=351840 | ~21990.00 ms
+[2026-04-10 14:44:51.402] [UDP] UDP audio paced send: 46 chunks of 960 bytes
+[2026-04-10 14:44:52.973] [UDP] UDP audio paced send: 52 chunks of 960 bytes
+[2026-04-10 14:44:54.753] [UDP] UDP audio paced send: 59 chunks of 960 bytes
+[2026-04-10 14:44:56.743] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:44:58.733] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:45:00.724] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:45:02.714] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:45:04.705] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:45:06.696] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:45:09.377] [UDP] UDP audio paced send: 89 chunks of 960 bytes
+[2026-04-10 14:45:09.468] [UDP] UDP audio paced send: 2 chunks of 960 bytes
+[2026-04-10 14:45:09.470] [UDP] UDP audio end marker sent to ('10.19.187.137', 9999)
+[2026-04-10 14:45:09.470] [XAI] Response completed | tokens=1607
+[2026-04-10 14:45:09.470] [INFO] Assistant response: Los timestamps ayudan mucho en apps de tiempo real como RTP o QUIC, para medir latencia, jitter o sincronizar streams. Pero para ordenar paquetes en UDP, no son lo fundamental: los números de secuencia son clave, ya que los timestamps no detectan pérdidas ni garantizan orden estricto. ¡Úsalos juntos si necesitas precisión temporal!
+[2026-04-10 14:45:09.470] [UDP] UDP target addr: ('10.19.187.137', 9999)
+[2026-04-10 14:45:09.471] [UDP] UDP JSON sent to ('10.19.187.137', 9999): {"type": "assistant_response", "value": "Los timestamps ayudan mucho en apps de tiempo real como RTP o QUIC, para medir latencia, jitter o sincronizar streams. Pero para ordenar paquetes en UDP, no son lo fundamental: los números de secuencia son clave, ya que los timestamps no detectan pérdidas ni garantizan orden estricto. ¡Úsalos juntos si necesitas precisión temporal!", "final": true, "timestamp": "2026-04-10T14:45:09"}

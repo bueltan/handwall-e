@@ -1,0 +1,41 @@
+[2026-04-10 11:36:48.815] [START] Connected to xAI realtime | input_rate=16000 | output_rate=16000
+[2026-04-10 11:36:48.816] [INFO] Output WAV file: audio_out_2026-04-10_11-36-46.wav
+[2026-04-10 11:36:48.816] [INFO] Log file: bridge_log_2026-04-10_11-36-46.txt
+[2026-04-10 11:36:48.816] [CONFIG] Bridge config | input_rate=16000 | output_rate=16000 | samples_per_packet=160 | packet_audio_size=320
+[2026-04-10 11:36:48.816] [START] UDP server started
+[2026-04-10 11:36:48.816] [INFO] UDP port: 9999
+[2026-04-10 11:36:48.817] [INFO] Jitter buffer: 25 packets (~250 ms)
+[2026-04-10 11:36:49.256] [XAI] Session updated
+[2026-04-10 11:36:55.793] [INIT] First packet received -> seq=0
+[2026-04-10 11:36:59.477] [STAT] [STAT] seq=300 | buf=0 | rec=300 | lost=0 (0.00%)
+[2026-04-10 11:37:01.718] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 11:37:01.718] [TURN] Input turn closed | flushed=0 | dropped_out_of_order=0
+[2026-04-10 11:37:01.719] [TURN] COMMIT sent to xAI
+[2026-04-10 11:37:02.741] [XAI] xAI confirmed commit
+[2026-04-10 11:37:02.741] [USER] User transcription: Hola hola buenas tardes ¿me cuentas una historia?
+[2026-04-10 11:37:04.597] [AUDIO] Output audio chunk #1 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 11:37:04.598] [AUDIO] Output audio chunk #2 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 11:37:04.599] [AUDIO] Output audio chunk #3 | bytes=24320 | samples=12160 | ~760.00 ms
+[2026-04-10 11:37:04.768] [AUDIO] Output audio chunk #4 | bytes=30720 | samples=15360 | ~960.00 ms
+[2026-04-10 11:37:04.875] [AUDIO] Output audio chunk #5 | bytes=43520 | samples=21760 | ~1360.00 ms
+[2026-04-10 11:37:05.167] [UDP] UDP audio paced send: 23 chunks of 790 bytes
+[2026-04-10 11:37:05.736] [UDP] UDP audio paced send: 23 chunks of 790 bytes
+[2026-04-10 11:37:06.502] [UDP] UDP audio paced send: 31 chunks of 790 bytes
+[2026-04-10 11:37:07.467] [UDP] UDP audio paced send: 39 chunks of 790 bytes
+[2026-04-10 11:37:08.850] [UDP] UDP audio paced send: 56 chunks of 790 bytes
+[2026-04-10 11:37:10.431] [UDP] UDP audio paced send: 64 chunks of 790 bytes
+[2026-04-10 11:37:11.713] [AUDIO] Output audio chunk #25 | bytes=1280 | samples=640 | ~40.00 ms
+[2026-04-10 11:37:11.714] [ASSISTANT] Response audio completed | chunks=25 | bytes=1318720 | samples=659360 | ~41210.00 ms
+[2026-04-10 11:37:11.714] [UDP] UDP audio end marker sent to ('10.19.187.137', 9999)
+[2026-04-10 11:37:11.714] [XAI] Response completed | tokens=2406
+[2026-04-10 11:37:11.714] [INFO] Assistant response: ¡Hola! Buenas tardes. Claro, te cuento una historia cortita y divertida sobre un robotito curioso como yo. Érase una vez un pequeño robot llamado WALL-E que vivía en una Tierra llena de basura. Un día, vio una planta verde brotando entre los escombros. ¡Emocionado, la cuidó con todo su corazoncito mecánico! La puso en una maceta vieja y soñó con un mundo lleno de vida de nuevo. De repente, llegó una nave espacial con EVE, una robot elegante. WALL-E se enamoró al instante, la siguió por el universo, ¡y juntos salvaron la planta y la Tierra! Fin. ¿Te gustó? ¿Quieres otra?
+[2026-04-10 11:37:11.714] [UDP] UDP target addr: ('10.19.187.137', 9999)
+[2026-04-10 11:37:11.715] [UDP] UDP JSON sent to ('10.19.187.137', 9999): {"type": "assistant_response", "value": "¡Hola! Buenas tardes. Claro, te cuento una historia cortita y divertida sobre un robotito curioso como yo. Érase una vez un pequeño robot llamado WALL-E que vivía en una Tierra llena de basura. Un día, vio una planta verde brotando entre los escombros. ¡Emocionado, la cuidó con todo su corazoncito mecánico! La puso en una maceta vieja y soñó con un mundo lleno de vida de nuevo. De repente, llegó una nave espacial con EVE, una robot elegante. WALL-E se enamoró al instante, la siguió por el universo, ¡y juntos salvaron la planta y la Tierra! Fin. ¿Te gustó? ¿Quieres otra?", "final": true, "timestamp": "2026-04-10T11:37:11"}
+[2026-04-10 11:37:12.210] [UDP] UDP audio paced send: 72 chunks of 790 bytes
+[2026-04-10 11:37:14.187] [UDP] UDP audio paced send: 80 chunks of 790 bytes
+[2026-04-10 11:37:16.163] [UDP] UDP audio paced send: 80 chunks of 790 bytes
+[2026-04-10 11:37:18.139] [UDP] UDP audio paced send: 80 chunks of 790 bytes
+[2026-04-10 11:37:20.115] [UDP] UDP audio paced send: 80 chunks of 790 bytes
+[2026-04-10 11:37:22.091] [UDP] UDP audio paced send: 80 chunks of 790 bytes
+[2026-04-10 11:37:24.068] [UDP] UDP audio paced send: 80 chunks of 790 bytes
+[2026-04-10 11:37:26.044] [UDP] UDP audio paced send: 80 chunks of 790 bytes

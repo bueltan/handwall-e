@@ -1,3 +1,4 @@
+import asyncio
 import base64
 from datetime import datetime
 import json
@@ -31,8 +32,37 @@ class XaiRealtimeClient:
         self.wav_writer = wav_writer
         self.udp_message_sender = udp_message_sender
         self.udp_server = udp_server
+
         self.ws = None
         self.current_assistant_text = ""
+
+        self.output_audio_bytes = 0
+        self.output_audio_chunks = 0
+
+        self.output_audio_queue: asyncio.Queue[bytes | None] = asyncio.Queue()
+        self.output_audio_done_event = asyncio.Event()
+        self.output_audio_done_event.set()
+        self.output_turn_finished = False
+
+    async def udp_audio_sender(self) -> None:
+        """Send assistant audio to the ESP32 without blocking websocket reads."""
+        while True:
+            pcm_data = await self.output_audio_queue.get()
+
+            if pcm_data is None:
+                break
+
+            await self.udp_message_sender.send_audio_chunked(
+                pcm_data,
+                self.udp_server.remote_addr,
+            )
+
+            if self.output_audio_queue.empty() and self.output_turn_finished:
+                self.udp_message_sender.send_audio_end(
+                    self.udp_server.remote_addr,
+                )
+                self.output_turn_finished = False
+                self.output_audio_done_event.set()
 
     async def connect(self) -> None:
         """Open the WebSocket connection and initialize the xAI session."""
@@ -63,13 +93,13 @@ class XaiRealtimeClient:
                             "input": {
                                 "format": {
                                     "type": "audio/pcm",
-                                    "rate": self.udp_config.sample_rate,
+                                    "rate": self.udp_config.input_sample_rate,
                                 }
                             },
                             "output": {
                                 "format": {
                                     "type": "audio/pcm",
-                                    "rate": self.udp_config.sample_rate,
+                                    "rate": self.udp_config.output_sample_rate,
                                 }
                             },
                         },
@@ -78,7 +108,14 @@ class XaiRealtimeClient:
             )
         )
 
-        self.logger.log("Connected to xAI realtime", "START")
+        self.logger.log(
+            (
+                "Connected to xAI realtime | "
+                f"input_rate={self.udp_config.input_sample_rate} | "
+                f"output_rate={self.udp_config.output_sample_rate}"
+            ),
+            "START",
+        )
 
     async def send_audio_append(self, pcm_data: bytes) -> None:
         """Send a chunk of PCM audio to the xAI input audio buffer."""
@@ -94,8 +131,14 @@ class XaiRealtimeClient:
     async def send_commit(self) -> None:
         """Commit the current input audio buffer and request a response."""
         self.current_assistant_text = ""
+        self.output_audio_bytes = 0
+        self.output_audio_chunks = 0
+        self.output_turn_finished = False
+        self.output_audio_done_event.clear()
+
         await self.ws.send(json.dumps({"type": "input_audio_buffer.commit"}))
         await self.ws.send(json.dumps({"type": "response.create"}))
+
         self.logger.log("COMMIT sent to xAI", "TURN")
 
     async def close(self) -> None:
@@ -126,7 +169,26 @@ class XaiRealtimeClient:
 
                 elif event_type == "response.output_audio.delta":
                     pcm_data = base64.b64decode(event["delta"])
-                    self.wav_writer.write(pcm_data)
+
+                    self.output_audio_chunks += 1
+                    self.output_audio_bytes += len(pcm_data)
+
+                    if self.output_audio_chunks <= 5 or self.output_audio_chunks % 25 == 0:
+                        samples = len(pcm_data) // 2
+                        approx_ms = (
+                            samples / self.udp_config.output_sample_rate
+                        ) * 1000.0
+                        self.logger.log(
+                            (
+                                f"Output audio chunk #{self.output_audio_chunks} | "
+                                f"bytes={len(pcm_data)} | samples={samples} | "
+                                f"~{approx_ms:.2f} ms"
+                            ),
+                            "AUDIO",
+                        )
+
+                    #self.wav_writer.write(pcm_data)
+                    await self.output_audio_queue.put(pcm_data)
 
                 elif event_type == "response.output_audio_transcript.delta":
                     delta_text = event.get("delta", "")
@@ -135,9 +197,37 @@ class XaiRealtimeClient:
 
                 elif event_type == "response.output_audio.done":
                     print()
-                    self.logger.log("Response audio completed", "ASSISTANT")
+
+                    total_samples = self.output_audio_bytes // 2
+                    total_ms = (
+                        total_samples / self.udp_config.output_sample_rate
+                    ) * 1000.0
+
+                    self.logger.log(
+                        (
+                            "Response audio completed | "
+                            f"chunks={self.output_audio_chunks} | "
+                            f"bytes={self.output_audio_bytes} | "
+                            f"samples={total_samples} | "
+                            f"~{total_ms:.2f} ms"
+                        ),
+                        "ASSISTANT",
+                    )
+
+                    # Do not send __END__ here.
+                    # The udp_audio_sender task will send it only after the queue is drained.
+                    self.output_turn_finished = True
+
+                    if self.output_audio_queue.empty():
+                        self.udp_message_sender.send_audio_end(
+                            self.udp_server.remote_addr,
+                        )
+                        self.output_turn_finished = False
+                        self.output_audio_done_event.set()
 
                 elif event_type == "response.done":
+                    await self.output_audio_done_event.wait()
+
                     usage = event.get("usage", {})
                     self.logger.log(
                         f"Response completed | tokens={usage.get('total_tokens')}",
@@ -147,13 +237,18 @@ class XaiRealtimeClient:
                     assistant_text = self.current_assistant_text.strip()
                     if assistant_text:
                         self.logger.log(f"Assistant response: {assistant_text}")
-                        self.logger.log(f"UDP target addr: {self.udp_server.remote_addr}", "UDP")
+                        self.logger.log(
+                            f"UDP target addr: {self.udp_server.remote_addr}",
+                            "UDP",
+                        )
                         self.udp_message_sender.send_json(
                             {
                                 "type": "assistant_response",
                                 "value": assistant_text,
                                 "final": True,
-                                "timestamp": datetime.now().isoformat(timespec="seconds"),
+                                "timestamp": datetime.now().isoformat(
+                                    timespec="seconds"
+                                ),
                             },
                             self.udp_server.remote_addr,
                         )

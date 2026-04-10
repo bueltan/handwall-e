@@ -1,0 +1,180 @@
+[2026-04-10 14:45:43.877] [START] Connected to xAI realtime | input_rate=16000 | output_rate=16000
+[2026-04-10 14:45:43.877] [INFO] Output WAV file: audio_out_2026-04-10_14-45-42.wav
+[2026-04-10 14:45:43.877] [INFO] Log file: bridge_log_2026-04-10_14-45-42.txt
+[2026-04-10 14:45:43.877] [CONFIG] Bridge config | input_rate=16000 | output_rate=16000 | samples_per_packet=160 | packet_audio_size=320
+[2026-04-10 14:45:43.878] [START] UDP server started
+[2026-04-10 14:45:43.878] [INFO] UDP port: 9999
+[2026-04-10 14:45:43.878] [INFO] Jitter buffer: 25 packets (~250 ms)
+[2026-04-10 14:45:44.120] [XAI] Session updated
+[2026-04-10 14:45:47.771] [INIT] First packet received -> seq=882
+[2026-04-10 14:45:51.085] [STAT] [STAT] seq=1182 | buf=0 | rec=300 | lost=0 (0.00%)
+[2026-04-10 14:45:54.739] [STAT] [STAT] seq=1482 | buf=0 | rec=600 | lost=0 (0.00%)
+[2026-04-10 14:45:55.729] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 14:45:55.737] [TURN] Input turn closed | flushed=0 | dropped_out_of_order=0
+[2026-04-10 14:45:55.738] [TURN] COMMIT sent to xAI
+[2026-04-10 14:45:56.002] [XAI] xAI confirmed commit
+[2026-04-10 14:45:57.440] [USER] User transcription: ¿Puedes contarme una historia que sea bastante, larga y entretenida?
+[2026-04-10 14:45:58.225] [AUDIO] Output audio chunk #1 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:45:58.254] [AUDIO] Output audio chunk #2 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:45:58.257] [AUDIO] Output audio chunk #3 | bytes=24320 | samples=12160 | ~760.00 ms
+[2026-04-10 14:45:58.362] [AUDIO] Output audio chunk #4 | bytes=30720 | samples=15360 | ~960.00 ms
+[2026-04-10 14:45:58.483] [AUDIO] Output audio chunk #5 | bytes=43520 | samples=21760 | ~1360.00 ms
+[2026-04-10 14:45:58.804] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:45:59.384] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:46:00.174] [UDP] UDP audio paced send: 26 chunks of 960 bytes
+[2026-04-10 14:46:01.145] [UDP] UDP audio paced send: 32 chunks of 960 bytes
+[2026-04-10 14:46:02.535] [UDP] UDP audio paced send: 46 chunks of 960 bytes
+[2026-04-10 14:46:04.105] [UDP] UDP audio paced send: 52 chunks of 960 bytes
+[2026-04-10 14:46:05.886] [UDP] UDP audio paced send: 59 chunks of 960 bytes
+[2026-04-10 14:46:06.206] [AUDIO] Output audio chunk #25 | bytes=62720 | samples=31360 | ~1960.00 ms
+[2026-04-10 14:46:07.876] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:09.866] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:11.856] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:13.837] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:15.827] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:16.599] [AUDIO] Output audio chunk #50 | bytes=62720 | samples=31360 | ~1960.00 ms
+[2026-04-10 14:46:17.817] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:19.798] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:21.789] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:23.772] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:25.762] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:27.298] [AUDIO] Output audio chunk #75 | bytes=62720 | samples=31360 | ~1960.00 ms
+[2026-04-10 14:46:27.745] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:29.735] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:31.725] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:33.715] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:35.706] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:37.696] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:37.912] [AUDIO] Output audio chunk #100 | bytes=62720 | samples=31360 | ~1960.00 ms
+[2026-04-10 14:46:39.687] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:41.669] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:43.659] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:45.641] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:47.632] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:48.247] [AUDIO] Output audio chunk #125 | bytes=62720 | samples=31360 | ~1960.00 ms
+[2026-04-10 14:46:49.622] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:51.613] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:53.603] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:55.593] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:57.583] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:46:59.483] [AUDIO] Output audio chunk #150 | bytes=62720 | samples=31360 | ~1960.00 ms
+[2026-04-10 14:46:59.573] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:01.556] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:03.546] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:05.537] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:07.527] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:08.624] [ASSISTANT] Response audio completed | chunks=174 | bytes=10636480 | samples=5318240 | ~332390.00 ms
+[2026-04-10 14:47:09.517] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:11.508] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:13.498] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:15.489] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:17.479] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:19.470] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:21.461] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:23.451] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:25.442] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:27.432] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:29.422] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:31.413] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:33.403] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:35.394] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:37.384] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:39.375] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:41.365] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:43.355] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:45.346] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:47.336] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:49.327] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:51.317] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:53.307] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:55.297] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:57.288] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:47:59.279] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:01.270] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:03.260] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:05.250] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:07.241] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:09.231] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:11.221] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:13.212] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:15.202] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:17.192] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:19.182] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:21.173] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:23.163] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:25.153] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:27.143] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:29.134] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:31.124] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:33.115] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:35.106] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:37.089] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:39.072] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:41.063] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:43.053] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:45.043] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:47.033] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:49.023] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:51.013] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:53.004] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:54.994] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:56.985] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:48:58.974] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:00.965] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:02.955] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:04.946] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:06.936] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:08.927] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:10.917] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:12.906] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:14.896] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:16.887] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:18.877] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:20.868] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:22.858] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:24.849] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:26.839] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:28.829] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:30.820] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:32.810] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:34.800] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:36.791] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:38.782] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:40.772] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:42.762] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:44.752] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:46.742] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:48.732] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:50.723] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:52.713] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:54.704] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:56.694] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:49:58.686] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:00.675] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:02.666] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:04.657] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:06.648] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:08.639] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:10.629] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:12.620] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:14.610] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:16.599] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:18.589] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:20.580] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:22.571] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:24.560] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:26.550] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:28.541] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:30.531] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:32.522] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:34.513] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:36.503] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:38.493] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:40.484] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:50:41.365] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 14:50:41.374] [TURN] Input turn closed with no pending audio
+[2026-04-10 14:50:41.377] [ERROR] Unexpected error: sent 1011 (internal error) keepalive ping timeout; no close frame received
+[2026-04-10 14:50:41.377] [SUMMARY] === END OF TRANSMISSION ===
+[2026-04-10 14:50:41.377] [SUMMARY] Output saved to: audio_out_2026-04-10_14-45-42.wav
+[2026-04-10 14:50:41.378] [SUMMARY] Total packets received: 684
+[2026-04-10 14:50:41.378] [SUMMARY] Total packets lost: 0 (0.00%)

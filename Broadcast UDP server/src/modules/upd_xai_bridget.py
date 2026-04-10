@@ -27,12 +27,16 @@ class UdpToXaiBridge:
         self.logger = BridgeLogger(self.log_file)
         self.wav_writer = OutputWaveWriter(
             self.wav_out_file,
-            self.udp_config.sample_rate,
+            self.udp_config.output_sample_rate,
         )
 
         self.audio_queue: asyncio.Queue = asyncio.Queue()
         self.commit_queue: asyncio.Queue = asyncio.Queue()
+        self.output_audio_done_event = asyncio.Event()
+        self.output_audio_done_event.set()
 
+        self.output_turn_finished = False
+        
         self.jitter_buffer = JitterBuffer(self.udp_config, self.logger)
         self.udp_message_sender = UdpMessageSender(self.logger)
 
@@ -103,6 +107,17 @@ class UdpToXaiBridge:
 
                 await self.xai_client.send_audio_append(pcm_data)
 
+    async def udp_audio_sender(self) -> None:
+        while True:
+            pcm_data = await self.output_audio_queue.get()
+            if pcm_data is None:
+                break
+
+            await self.udp_message_sender.send_audio_chunked(
+                pcm_data,
+                self.udp_server.remote_addr,
+            )
+
     async def run(self) -> None:
         """Start the bridge and keep all async tasks running together."""
         try:
@@ -110,10 +125,21 @@ class UdpToXaiBridge:
 
             self.logger.log(f"Output WAV file: {self.wav_out_file}")
             self.logger.log(f"Log file: {self.log_file}")
+            self.logger.log(
+                (
+                    "Bridge config | "
+                    f"input_rate={self.udp_config.input_sample_rate} | "
+                    f"output_rate={self.udp_config.output_sample_rate} | "
+                    f"samples_per_packet={self.udp_config.samples_per_packet} | "
+                    f"packet_audio_size={self.udp_config.packet_audio_size}"
+                ),
+                "CONFIG",
+            )
 
             await asyncio.gather(
                 self.websocket_sender(),
                 self.xai_client.receive_events(),
+                self.xai_client.udp_audio_sender(),
                 self.udp_server.run(),
             )
 

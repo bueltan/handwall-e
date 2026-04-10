@@ -27,6 +27,8 @@ class UdpServer:
 
         self.sock: Optional[socket.socket] = None
         self.running: bool = True
+
+        # Last known peer that sent valid audio/control for the active session.
         self.remote_addr: Optional[Tuple[str, int]] = None
 
     async def run(self) -> None:
@@ -59,20 +61,21 @@ class UdpServer:
             except Exception as exc:
                 self.logger.log(f"Unexpected UDP receive error: {exc}", "ERROR")
                 break
-            self.remote_addr = addr
 
             if data == b"PING":
                 self.sock.sendto(b"PONG", addr)
                 continue
 
             if data == b"COMMIT":
-                self.logger.log("UDP COMMIT signal received", "TURN")
+                self.remote_addr = addr
+                self.logger.log(f"UDP COMMIT signal received from {addr}", "TURN")
                 self.jitter_buffer.close_input_turn(self.audio_queue)
                 await self.commit_queue.put("commit")
                 continue
 
             if data == b"CANCEL":
-                self.logger.log("UDP CANCEL signal received", "TURN")
+                self.remote_addr = addr
+                self.logger.log(f"UDP CANCEL signal received from {addr}", "TURN")
                 self.jitter_buffer.reset_for_cancel()
                 await self.commit_queue.put("cancel")
                 continue
@@ -84,7 +87,7 @@ class UdpServer:
 
             if data.startswith(b"HELLO_FROM_ESP32"):
                 self.logger.log(
-                    f"UDP message: {data.decode(errors='ignore')}",
+                    f"UDP message from {addr}: {data.decode(errors='ignore')}",
                     "INFO",
                 )
                 continue
@@ -103,6 +106,9 @@ class UdpServer:
                     "WARN",
                 )
                 continue
+
+            # Only set return peer when a valid audio packet arrives.
+            self.remote_addr = addr
 
             self.jitter_buffer.open_new_turn_if_needed(seq)
             self.jitter_buffer.register_packet(seq, audio)

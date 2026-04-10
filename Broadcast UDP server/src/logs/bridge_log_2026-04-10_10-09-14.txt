@@ -1,0 +1,7 @@
+[2026-04-10 10:09:15.728] [START] Connected to xAI realtime
+[2026-04-10 10:09:15.728] [INFO] Output WAV file: audio_out_2026-04-10_10-09-14.wav
+[2026-04-10 10:09:15.728] [INFO] Log file: bridge_log_2026-04-10_10-09-14.txt
+[2026-04-10 10:09:15.729] [START] UDP server started
+[2026-04-10 10:09:15.729] [INFO] UDP port: 5000
+[2026-04-10 10:09:15.729] [INFO] Jitter buffer: 25 packets (~250 ms)
+[2026-04-10 10:09:16.061] [XAI] Session updated

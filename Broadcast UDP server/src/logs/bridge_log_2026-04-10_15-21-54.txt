@@ -1,0 +1,66 @@
+[2026-04-10 15:21:55.424] [START] Connected to xAI realtime | input_rate=16000 | output_rate=16000
+[2026-04-10 15:21:55.424] [INFO] Output WAV file: audio_out_2026-04-10_15-21-54.wav
+[2026-04-10 15:21:55.424] [INFO] Log file: bridge_log_2026-04-10_15-21-54.txt
+[2026-04-10 15:21:55.424] [CONFIG] Bridge config | input_rate=16000 | output_rate=16000 | samples_per_packet=160 | packet_audio_size=320
+[2026-04-10 15:21:55.425] [START] UDP server started
+[2026-04-10 15:21:55.425] [INFO] UDP port: 9999
+[2026-04-10 15:21:55.425] [INFO] Jitter buffer: 25 packets (~250 ms)
+[2026-04-10 15:21:55.715] [XAI] Session updated
+[2026-04-10 15:22:08.614] [INIT] First packet received -> seq=1
+[2026-04-10 15:22:10.769] [LOSS] [LOSS] seq 156 lost -> filled with silence
+[2026-04-10 15:22:10.840] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 15:22:10.842] [TURN] Input turn closed | flushed=0 | dropped_out_of_order=1
+[2026-04-10 15:22:10.843] [TURN] COMMIT sent to xAI
+[2026-04-10 15:22:10.843] [TURN] New audio turn #1 -> initial seq=204
+[2026-04-10 15:22:12.095] [XAI] xAI confirmed commit
+[2026-04-10 15:22:12.095] [USER] User transcription: Hola, hola ¿me escuchas?
+[2026-04-10 15:22:13.328] [AUDIO] Output audio chunk #1 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 15:22:13.338] [AUDIO] Output audio chunk #2 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 15:22:13.437] [AUDIO] Output audio chunk #3 | bytes=24320 | samples=12160 | ~760.00 ms
+[2026-04-10 15:22:13.445] [AUDIO] Output audio chunk #4 | bytes=30720 | samples=15360 | ~960.00 ms
+[2026-04-10 15:22:13.572] [AUDIO] Output audio chunk #5 | bytes=62400 | samples=31200 | ~1950.00 ms
+[2026-04-10 15:22:13.574] [ASSISTANT] Response audio completed | chunks=6 | bytes=154560 | samples=77280 | ~4830.00 ms
+[2026-04-10 15:22:13.908] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 15:22:14.488] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 15:22:15.278] [UDP] UDP audio paced send: 26 chunks of 960 bytes
+[2026-04-10 15:22:16.249] [UDP] UDP audio paced send: 32 chunks of 960 bytes
+[2026-04-10 15:22:18.211] [UDP] UDP audio paced send: 65 chunks of 960 bytes
+[2026-04-10 15:22:18.281] [UDP] UDP audio paced send: 2 chunks of 960 bytes
+[2026-04-10 15:22:18.283] [UDP] UDP audio end marker sent to ('10.19.187.137', 9999)
+[2026-04-10 15:22:18.284] [XAI] Response completed | tokens=355
+[2026-04-10 15:22:18.284] [INFO] Assistant response: ¡Hola! Sí, te escucho perfectamente. ¿En qué puedo ayudarte hoy?
+[2026-04-10 15:22:18.284] [UDP] UDP target addr: ('10.19.187.137', 9999)
+[2026-04-10 15:22:18.284] [UDP] UDP JSON sent to ('10.19.187.137', 9999): {"type": "assistant_response", "value": "¡Hola! Sí, te escucho perfectamente. ¿En qué puedo ayudarte hoy?", "final": true, "timestamp": "2026-04-10T15:22:18"}
+[2026-04-10 15:22:21.569] [LOSS] [LOSS] seq 282 lost -> filled with silence
+[2026-04-10 15:22:21.620] [LOSS] [LOSS] seq 283 lost -> filled with silence
+[2026-04-10 15:22:21.719] [LOSS] [LOSS] seq 284 lost -> filled with silence
+[2026-04-10 15:22:21.737] [STAT] [STAT] seq=285 | buf=19 | rec=300 | lost=4 (1.33%)
+[2026-04-10 15:22:21.742] [LOSS] [LOSS] seq 285 lost -> filled with silence
+[2026-04-10 15:22:22.333] [LOSS] [LOSS] seq 286 lost -> filled with silence
+[2026-04-10 15:22:22.337] [LOSS] [LOSS] seq 287 lost -> filled with silence
+[2026-04-10 15:22:22.340] [LOSS] [LOSS] seq 288 lost -> filled with silence
+[2026-04-10 15:22:22.342] [LOSS] [LOSS] seq 289 lost -> filled with silence
+[2026-04-10 15:22:22.344] [LOSS] [LOSS] seq 290 lost -> filled with silence
+[2026-04-10 15:22:22.346] [LOSS] [LOSS] seq 291 lost -> filled with silence
+[2026-04-10 15:22:22.348] [LOSS] [LOSS] seq 292 lost -> filled with silence
+[2026-04-10 15:22:22.350] [LOSS] [LOSS] seq 296 lost -> filled with silence
+[2026-04-10 15:22:22.352] [LOSS] [LOSS] seq 297 lost -> filled with silence
+[2026-04-10 15:22:22.355] [LOSS] [LOSS] seq 298 lost -> filled with silence
+[2026-04-10 15:22:22.414] [LOSS] [LOSS] seq 299 lost -> filled with silence
+[2026-04-10 15:22:22.538] [LOSS] [LOSS] seq 300 lost -> filled with silence
+[2026-04-10 15:22:22.541] [LOSS] [LOSS] seq 301 lost -> filled with silence
+[2026-04-10 15:22:22.593] [LOSS] [LOSS] seq 302 lost -> filled with silence
+[2026-04-10 15:22:22.659] [LOSS] [LOSS] seq 303 lost -> filled with silence
+[2026-04-10 15:22:22.742] [LOSS] [LOSS] seq 304 lost -> filled with silence
+[2026-04-10 15:22:22.773] [LOSS] [LOSS] seq 305 lost -> filled with silence
+[2026-04-10 15:22:22.836] [LOSS] [LOSS] seq 306 lost -> filled with silence
+[2026-04-10 15:22:22.895] [LOSS] [LOSS] seq 307 lost -> filled with silence
+[2026-04-10 15:22:24.175] [LOSS] [LOSS] seq 308 lost -> filled with silence
+[2026-04-10 15:22:24.186] [LOSS] [LOSS] seq 309 lost -> filled with silence
+[2026-04-10 15:22:24.188] [LOSS] [LOSS] seq 310 lost -> filled with silence
+[2026-04-10 15:22:24.189] [LOSS] [LOSS] seq 311 lost -> filled with silence
+[2026-04-10 15:22:24.196] [LOSS] [LOSS] seq 312 lost -> filled with silence
+[2026-04-10 15:22:28.711] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 15:22:28.721] [TURN] Input turn closed | flushed=0 | dropped_out_of_order=142
+[2026-04-10 15:22:28.721] [TURN] COMMIT sent to xAI
+[2026-04-10 15:22:29.037] [XAI] xAI confirmed commit

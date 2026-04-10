@@ -1,0 +1,15 @@
+[2026-04-10 10:41:11.175] [START] Connected to xAI realtime | input_rate=16000 | output_rate=16000
+[2026-04-10 10:41:11.176] [INFO] Output WAV file: audio_out_2026-04-10_10-41-10.wav
+[2026-04-10 10:41:11.176] [INFO] Log file: bridge_log_2026-04-10_10-41-10.txt
+[2026-04-10 10:41:11.176] [CONFIG] Bridge config | input_rate=16000 | output_rate=16000 | samples_per_packet=160 | packet_audio_size=320
+[2026-04-10 10:41:11.177] [START] UDP server started
+[2026-04-10 10:41:11.177] [INFO] UDP port: 9999
+[2026-04-10 10:41:11.177] [INFO] Jitter buffer: 25 packets (~250 ms)
+[2026-04-10 10:41:11.534] [XAI] Session updated
+[2026-04-10 10:42:57.397] [INIT] First packet received -> seq=0
+[2026-04-10 10:43:01.371] [LOSS] [LOSS] seq 263 lost -> filled with silence
+[2026-04-10 10:43:01.373] [LOSS] [LOSS] seq 264 lost -> filled with silence
+[2026-04-10 10:43:01.392] [STAT] [STAT] seq=302 | buf=0 | rec=300 | lost=2 (0.67%)
+[2026-04-10 10:43:04.645] [STAT] [STAT] seq=602 | buf=0 | rec=600 | lost=2 (0.33%)
+[2026-04-10 10:43:08.534] [STAT] [STAT] seq=902 | buf=0 | rec=900 | lost=2 (0.22%)
+[2026-04-10 10:43:10.171] [LOSS] [LOSS] seq 1045 lost -> filled with silence

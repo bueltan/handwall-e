@@ -1,0 +1,77 @@
+[2026-04-10 11:47:51.760] [START] Connected to xAI realtime | input_rate=16000 | output_rate=16000
+[2026-04-10 11:47:51.761] [INFO] Output WAV file: audio_out_2026-04-10_11-47-50.wav
+[2026-04-10 11:47:51.761] [INFO] Log file: bridge_log_2026-04-10_11-47-50.txt
+[2026-04-10 11:47:51.761] [CONFIG] Bridge config | input_rate=16000 | output_rate=16000 | samples_per_packet=160 | packet_audio_size=320
+[2026-04-10 11:47:51.761] [START] UDP server started
+[2026-04-10 11:47:51.761] [INFO] UDP port: 9999
+[2026-04-10 11:47:51.761] [INFO] Jitter buffer: 25 packets (~250 ms)
+[2026-04-10 11:47:52.098] [XAI] Session updated
+[2026-04-10 11:47:59.350] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 11:47:59.352] [TURN] Input turn closed with no pending audio
+[2026-04-10 11:47:59.353] [TURN] COMMIT sent to xAI
+[2026-04-10 11:48:01.765] [AUDIO] Output audio chunk #1 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 11:48:01.836] [AUDIO] Output audio chunk #2 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 11:48:01.861] [TURN] New audio turn #1 -> initial seq=0
+[2026-04-10 11:48:01.866] [AUDIO] Output audio chunk #3 | bytes=24320 | samples=12160 | ~760.00 ms
+[2026-04-10 11:48:02.154] [AUDIO] Output audio chunk #4 | bytes=30720 | samples=15360 | ~960.00 ms
+[2026-04-10 11:48:02.192] [AUDIO] Output audio chunk #5 | bytes=43520 | samples=21760 | ~1360.00 ms
+[2026-04-10 11:48:02.278] [ASSISTANT] Response audio completed | chunks=7 | bytes=164800 | samples=82400 | ~5150.00 ms
+[2026-04-10 11:48:02.279] [UDP] UDP audio end marker sent to ('10.19.187.137', 9999)
+[2026-04-10 11:48:02.280] [XAI] Response completed | tokens=295
+[2026-04-10 11:48:02.280] [INFO] Assistant response: Beep boop! Hi, friend. I'm WALL-E, ready to help. What can I do for ya today?
+[2026-04-10 11:48:02.280] [UDP] UDP target addr: ('10.19.187.137', 9999)
+[2026-04-10 11:48:02.280] [UDP] UDP JSON sent to ('10.19.187.137', 9999): {"type": "assistant_response", "value": "Beep boop! Hi, friend. I'm WALL-E, ready to help. What can I do for ya today?", "final": true, "timestamp": "2026-04-10T11:48:02"}
+[2026-04-10 11:48:02.346] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 11:48:02.918] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 11:48:03.702] [UDP] UDP audio paced send: 26 chunks of 960 bytes
+[2026-04-10 11:48:04.671] [UDP] UDP audio paced send: 32 chunks of 960 bytes
+[2026-04-10 11:48:05.738] [STAT] [STAT] seq=300 | buf=0 | rec=300 | lost=0 (0.00%)
+[2026-04-10 11:48:06.061] [UDP] UDP audio paced send: 46 chunks of 960 bytes
+[2026-04-10 11:48:07.001] [UDP] UDP audio paced send: 31 chunks of 960 bytes
+[2026-04-10 11:48:07.071] [UDP] UDP audio paced send: 2 chunks of 960 bytes
+[2026-04-10 11:48:09.376] [STAT] [STAT] seq=600 | buf=0 | rec=600 | lost=0 (0.00%)
+[2026-04-10 11:48:13.172] [STAT] [STAT] seq=900 | buf=0 | rec=900 | lost=0 (0.00%)
+[2026-04-10 11:48:26.672] [LOSS] [LOSS] seq 962 lost -> filled with silence
+[2026-04-10 11:48:27.696] [LOSS] [LOSS] seq 963 lost -> filled with silence
+[2026-04-10 11:48:27.697] [LOSS] [LOSS] seq 964 lost -> filled with silence
+[2026-04-10 11:48:27.699] [LOSS] [LOSS] seq 965 lost -> filled with silence
+[2026-04-10 11:48:27.700] [LOSS] [LOSS] seq 966 lost -> filled with silence
+[2026-04-10 11:48:27.702] [LOSS] [LOSS] seq 967 lost -> filled with silence
+[2026-04-10 11:48:27.704] [LOSS] [LOSS] seq 968 lost -> filled with silence
+[2026-04-10 11:48:27.705] [LOSS] [LOSS] seq 969 lost -> filled with silence
+[2026-04-10 11:48:27.706] [LOSS] [LOSS] seq 970 lost -> filled with silence
+[2026-04-10 11:48:27.707] [LOSS] [LOSS] seq 971 lost -> filled with silence
+[2026-04-10 11:48:27.708] [LOSS] [LOSS] seq 972 lost -> filled with silence
+[2026-04-10 11:48:27.711] [LOSS] [LOSS] seq 973 lost -> filled with silence
+[2026-04-10 11:48:27.712] [LOSS] [LOSS] seq 974 lost -> filled with silence
+[2026-04-10 11:48:27.713] [LOSS] [LOSS] seq 975 lost -> filled with silence
+[2026-04-10 11:48:27.714] [LOSS] [LOSS] seq 976 lost -> filled with silence
+[2026-04-10 11:48:27.715] [LOSS] [LOSS] seq 977 lost -> filled with silence
+[2026-04-10 11:48:27.716] [LOSS] [LOSS] seq 978 lost -> filled with silence
+[2026-04-10 11:48:27.717] [LOSS] [LOSS] seq 979 lost -> filled with silence
+[2026-04-10 11:48:27.717] [LOSS] [LOSS] seq 980 lost -> filled with silence
+[2026-04-10 11:48:28.872] [LOSS] [LOSS] seq 981 lost -> filled with silence
+[2026-04-10 11:48:28.884] [LOSS] [LOSS] seq 982 lost -> filled with silence
+[2026-04-10 11:48:28.886] [LOSS] [LOSS] seq 983 lost -> filled with silence
+[2026-04-10 11:48:28.887] [LOSS] [LOSS] seq 984 lost -> filled with silence
+[2026-04-10 11:48:28.888] [LOSS] [LOSS] seq 985 lost -> filled with silence
+[2026-04-10 11:48:28.889] [LOSS] [LOSS] seq 986 lost -> filled with silence
+[2026-04-10 11:48:28.891] [LOSS] [LOSS] seq 987 lost -> filled with silence
+[2026-04-10 11:48:28.892] [LOSS] [LOSS] seq 988 lost -> filled with silence
+[2026-04-10 11:48:28.894] [LOSS] [LOSS] seq 989 lost -> filled with silence
+[2026-04-10 11:48:28.895] [LOSS] [LOSS] seq 990 lost -> filled with silence
+[2026-04-10 11:48:28.898] [LOSS] [LOSS] seq 991 lost -> filled with silence
+[2026-04-10 11:48:28.899] [LOSS] [LOSS] seq 992 lost -> filled with silence
+[2026-04-10 11:48:28.903] [LOSS] [LOSS] seq 993 lost -> filled with silence
+[2026-04-10 11:48:28.905] [LOSS] [LOSS] seq 994 lost -> filled with silence
+[2026-04-10 11:48:28.907] [LOSS] [LOSS] seq 995 lost -> filled with silence
+[2026-04-10 11:48:28.910] [LOSS] [LOSS] seq 996 lost -> filled with silence
+[2026-04-10 11:48:28.911] [LOSS] [LOSS] seq 997 lost -> filled with silence
+[2026-04-10 11:48:28.912] [LOSS] [LOSS] seq 998 lost -> filled with silence
+[2026-04-10 11:48:28.914] [LOSS] [LOSS] seq 999 lost -> filled with silence
+[2026-04-10 11:48:28.939] [LOSS] [LOSS] seq 1000 lost -> filled with silence
+[2026-04-10 11:48:28.995] [LOSS] [LOSS] seq 1001 lost -> filled with silence
+[2026-04-10 11:48:29.128] [LOSS] [LOSS] seq 1002 lost -> filled with silence
+[2026-04-10 11:48:29.133] [LOSS] [LOSS] seq 1003 lost -> filled with silence
+[2026-04-10 11:48:29.333] [LOSS] [LOSS] seq 1004 lost -> filled with silence
+[2026-04-10 11:48:29.344] [LOSS] [LOSS] seq 1005 lost -> filled with silence

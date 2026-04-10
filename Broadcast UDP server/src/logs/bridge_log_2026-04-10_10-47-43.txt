@@ -1,0 +1,107 @@
+[2026-04-10 10:47:44.152] [START] Connected to xAI realtime | input_rate=16000 | output_rate=16000
+[2026-04-10 10:47:44.153] [INFO] Output WAV file: audio_out_2026-04-10_10-47-43.wav
+[2026-04-10 10:47:44.153] [INFO] Log file: bridge_log_2026-04-10_10-47-43.txt
+[2026-04-10 10:47:44.153] [CONFIG] Bridge config | input_rate=16000 | output_rate=16000 | samples_per_packet=160 | packet_audio_size=320
+[2026-04-10 10:47:44.154] [START] UDP server started
+[2026-04-10 10:47:44.154] [INFO] UDP port: 9999
+[2026-04-10 10:47:44.154] [INFO] Jitter buffer: 25 packets (~250 ms)
+[2026-04-10 10:47:44.162] [INIT] First packet received -> seq=7624
+[2026-04-10 10:47:44.504] [XAI] Session updated
+[2026-04-10 10:47:47.924] [STAT] [STAT] seq=7924 | buf=0 | rec=300 | lost=0 (0.00%)
+[2026-04-10 10:47:59.353] [LOSS] [LOSS] seq 8014 lost -> filled with silence
+[2026-04-10 10:47:59.355] [LOSS] [LOSS] seq 8015 lost -> filled with silence
+[2026-04-10 10:47:59.357] [LOSS] [LOSS] seq 8016 lost -> filled with silence
+[2026-04-10 10:47:59.359] [LOSS] [LOSS] seq 8017 lost -> filled with silence
+[2026-04-10 10:47:59.361] [LOSS] [LOSS] seq 8018 lost -> filled with silence
+[2026-04-10 10:47:59.384] [LOSS] [LOSS] seq 8019 lost -> filled with silence
+[2026-04-10 10:47:59.419] [LOSS] [LOSS] seq 8020 lost -> filled with silence
+[2026-04-10 10:47:59.479] [LOSS] [LOSS] seq 8021 lost -> filled with silence
+[2026-04-10 10:47:59.537] [LOSS] [LOSS] seq 8022 lost -> filled with silence
+[2026-04-10 10:47:59.603] [LOSS] [LOSS] seq 8023 lost -> filled with silence
+[2026-04-10 10:47:59.662] [LOSS] [LOSS] seq 8024 lost -> filled with silence
+[2026-04-10 10:47:59.940] [LOSS] [LOSS] seq 8025 lost -> filled with silence
+[2026-04-10 10:47:59.942] [LOSS] [LOSS] seq 8026 lost -> filled with silence
+[2026-04-10 10:47:59.943] [LOSS] [LOSS] seq 8027 lost -> filled with silence
+[2026-04-10 10:47:59.945] [LOSS] [LOSS] seq 8028 lost -> filled with silence
+[2026-04-10 10:47:59.953] [LOSS] [LOSS] seq 8029 lost -> filled with silence
+[2026-04-10 10:48:00.016] [LOSS] [LOSS] seq 8030 lost -> filled with silence
+[2026-04-10 10:48:00.191] [LOSS] [LOSS] seq 8031 lost -> filled with silence
+[2026-04-10 10:48:00.193] [LOSS] [LOSS] seq 8032 lost -> filled with silence
+[2026-04-10 10:48:00.205] [LOSS] [LOSS] seq 8033 lost -> filled with silence
+[2026-04-10 10:48:00.258] [LOSS] [LOSS] seq 8034 lost -> filled with silence
+[2026-04-10 10:48:00.879] [LOSS] [LOSS] seq 8035 lost -> filled with silence
+[2026-04-10 10:48:00.882] [LOSS] [LOSS] seq 8036 lost -> filled with silence
+[2026-04-10 10:48:00.884] [LOSS] [LOSS] seq 8037 lost -> filled with silence
+[2026-04-10 10:48:00.886] [LOSS] [LOSS] seq 8038 lost -> filled with silence
+[2026-04-10 10:48:00.888] [LOSS] [LOSS] seq 8039 lost -> filled with silence
+[2026-04-10 10:48:00.889] [LOSS] [LOSS] seq 8040 lost -> filled with silence
+[2026-04-10 10:48:00.891] [LOSS] [LOSS] seq 8041 lost -> filled with silence
+[2026-04-10 10:48:00.895] [LOSS] [LOSS] seq 8042 lost -> filled with silence
+[2026-04-10 10:48:00.897] [LOSS] [LOSS] seq 8043 lost -> filled with silence
+[2026-04-10 10:48:00.900] [LOSS] [LOSS] seq 8044 lost -> filled with silence
+[2026-04-10 10:48:01.019] [LOSS] [LOSS] seq 8045 lost -> filled with silence
+[2026-04-10 10:48:01.022] [LOSS] [LOSS] seq 8046 lost -> filled with silence
+[2026-04-10 10:48:01.052] [LOSS] [LOSS] seq 8047 lost -> filled with silence
+[2026-04-10 10:48:01.112] [LOSS] [LOSS] seq 8048 lost -> filled with silence
+[2026-04-10 10:48:01.171] [LOSS] [LOSS] seq 8049 lost -> filled with silence
+[2026-04-10 10:48:01.234] [LOSS] [LOSS] seq 8050 lost -> filled with silence
+[2026-04-10 10:48:01.334] [LOSS] [LOSS] seq 8051 lost -> filled with silence
+[2026-04-10 10:48:01.425] [LOSS] [LOSS] seq 8052 lost -> filled with silence
+[2026-04-10 10:48:01.427] [LOSS] [LOSS] seq 8053 lost -> filled with silence
+[2026-04-10 10:48:01.476] [LOSS] [LOSS] seq 8054 lost -> filled with silence
+[2026-04-10 10:48:01.533] [LOSS] [LOSS] seq 8055 lost -> filled with silence
+[2026-04-10 10:48:01.534] [STAT] [STAT] seq=8056 | buf=210 | rec=600 | lost=42 (7.00%)
+[2026-04-10 10:48:01.921] [LOSS] [LOSS] seq 8056 lost -> filled with silence
+[2026-04-10 10:48:01.923] [LOSS] [LOSS] seq 8057 lost -> filled with silence
+[2026-04-10 10:48:01.925] [LOSS] [LOSS] seq 8058 lost -> filled with silence
+[2026-04-10 10:48:01.926] [LOSS] [LOSS] seq 8059 lost -> filled with silence
+[2026-04-10 10:48:01.928] [LOSS] [LOSS] seq 8060 lost -> filled with silence
+[2026-04-10 10:48:01.930] [LOSS] [LOSS] seq 8061 lost -> filled with silence
+[2026-04-10 10:48:01.953] [LOSS] [LOSS] seq 8062 lost -> filled with silence
+[2026-04-10 10:48:02.457] [LOSS] [LOSS] seq 8063 lost -> filled with silence
+[2026-04-10 10:48:02.460] [LOSS] [LOSS] seq 8064 lost -> filled with silence
+[2026-04-10 10:48:02.462] [LOSS] [LOSS] seq 8065 lost -> filled with silence
+[2026-04-10 10:48:02.465] [LOSS] [LOSS] seq 8066 lost -> filled with silence
+[2026-04-10 10:48:02.467] [LOSS] [LOSS] seq 8067 lost -> filled with silence
+[2026-04-10 10:48:02.469] [LOSS] [LOSS] seq 8068 lost -> filled with silence
+[2026-04-10 10:48:02.472] [LOSS] [LOSS] seq 8069 lost -> filled with silence
+[2026-04-10 10:48:02.474] [LOSS] [LOSS] seq 8070 lost -> filled with silence
+[2026-04-10 10:48:02.499] [LOSS] [LOSS] seq 8071 lost -> filled with silence
+[2026-04-10 10:48:02.553] [LOSS] [LOSS] seq 8072 lost -> filled with silence
+[2026-04-10 10:48:02.609] [LOSS] [LOSS] seq 8073 lost -> filled with silence
+[2026-04-10 10:48:02.667] [LOSS] [LOSS] seq 8074 lost -> filled with silence
+[2026-04-10 10:48:02.854] [LOSS] [LOSS] seq 8075 lost -> filled with silence
+[2026-04-10 10:48:02.856] [LOSS] [LOSS] seq 8076 lost -> filled with silence
+[2026-04-10 10:48:02.858] [LOSS] [LOSS] seq 8077 lost -> filled with silence
+[2026-04-10 10:48:02.909] [LOSS] [LOSS] seq 8078 lost -> filled with silence
+[2026-04-10 10:48:03.184] [LOSS] [LOSS] seq 8079 lost -> filled with silence
+[2026-04-10 10:48:03.196] [LOSS] [LOSS] seq 8080 lost -> filled with silence
+[2026-04-10 10:48:03.198] [LOSS] [LOSS] seq 8081 lost -> filled with silence
+[2026-04-10 10:48:03.200] [LOSS] [LOSS] seq 8082 lost -> filled with silence
+[2026-04-10 10:48:03.202] [LOSS] [LOSS] seq 8083 lost -> filled with silence
+[2026-04-10 10:48:03.366] [LOSS] [LOSS] seq 8084 lost -> filled with silence
+[2026-04-10 10:48:03.378] [LOSS] [LOSS] seq 8085 lost -> filled with silence
+[2026-04-10 10:48:03.388] [LOSS] [LOSS] seq 8086 lost -> filled with silence
+[2026-04-10 10:48:03.465] [LOSS] [LOSS] seq 8087 lost -> filled with silence
+[2026-04-10 10:48:03.889] [LOSS] [LOSS] seq 8088 lost -> filled with silence
+[2026-04-10 10:48:03.900] [LOSS] [LOSS] seq 8089 lost -> filled with silence
+[2026-04-10 10:48:03.904] [LOSS] [LOSS] seq 8090 lost -> filled with silence
+[2026-04-10 10:48:03.906] [LOSS] [LOSS] seq 8091 lost -> filled with silence
+[2026-04-10 10:48:03.908] [LOSS] [LOSS] seq 8092 lost -> filled with silence
+[2026-04-10 10:48:03.910] [LOSS] [LOSS] seq 8093 lost -> filled with silence
+[2026-04-10 10:48:03.912] [LOSS] [LOSS] seq 8094 lost -> filled with silence
+[2026-04-10 10:48:03.927] [LOSS] [LOSS] seq 8095 lost -> filled with silence
+[2026-04-10 10:48:03.987] [LOSS] [LOSS] seq 8096 lost -> filled with silence
+[2026-04-10 10:48:04.905] [LOSS] [LOSS] seq 8097 lost -> filled with silence
+[2026-04-10 10:48:04.917] [LOSS] [LOSS] seq 8098 lost -> filled with silence
+[2026-04-10 10:48:04.919] [LOSS] [LOSS] seq 8099 lost -> filled with silence
+[2026-04-10 10:48:04.921] [LOSS] [LOSS] seq 8100 lost -> filled with silence
+[2026-04-10 10:48:04.922] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 10:48:04.922] [TURN] Input turn closed | flushed=0 | dropped_out_of_order=435
+[2026-04-10 10:48:04.923] [TURN] COMMIT sent to xAI
+[2026-04-10 10:48:04.924] [TURN] New audio turn #1 -> initial seq=436
+[2026-04-10 10:48:05.938] [XAI] xAI confirmed commit
+[2026-04-10 10:48:32.990] [SUMMARY] === END OF TRANSMISSION ===
+[2026-04-10 10:48:33.000] [SUMMARY] Output saved to: audio_out_2026-04-10_10-47-43.wav
+[2026-04-10 10:48:33.000] [SUMMARY] Total packets received: 826
+[2026-04-10 10:48:33.000] [SUMMARY] Total packets lost: 87 (10.53%)

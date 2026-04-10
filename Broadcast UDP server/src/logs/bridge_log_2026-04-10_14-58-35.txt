@@ -1,0 +1,222 @@
+[2026-04-10 14:58:37.173] [START] Connected to xAI realtime | input_rate=16000 | output_rate=16000
+[2026-04-10 14:58:37.173] [INFO] Output WAV file: audio_out_2026-04-10_14-58-35.wav
+[2026-04-10 14:58:37.174] [INFO] Log file: bridge_log_2026-04-10_14-58-35.txt
+[2026-04-10 14:58:37.174] [CONFIG] Bridge config | input_rate=16000 | output_rate=16000 | samples_per_packet=160 | packet_audio_size=320
+[2026-04-10 14:58:37.174] [START] UDP server started
+[2026-04-10 14:58:37.174] [INFO] UDP port: 9999
+[2026-04-10 14:58:37.174] [INFO] Jitter buffer: 25 packets (~250 ms)
+[2026-04-10 14:58:37.698] [XAI] Session updated
+[2026-04-10 14:58:43.835] [INIT] First packet received -> seq=0
+[2026-04-10 14:58:47.065] [LOSS] [LOSS] seq 221 lost -> filled with silence
+[2026-04-10 14:58:47.122] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 14:58:47.122] [TURN] Input turn closed | flushed=0 | dropped_out_of_order=0
+[2026-04-10 14:58:47.123] [TURN] COMMIT sent to xAI
+[2026-04-10 14:58:48.136] [XAI] xAI confirmed commit
+[2026-04-10 14:58:48.341] [USER] User transcription: Oh là oh là.
+[2026-04-10 14:58:49.985] [AUDIO] Output audio chunk #1 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:58:49.996] [AUDIO] Output audio chunk #2 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:58:50.064] [AUDIO] Output audio chunk #3 | bytes=24320 | samples=12160 | ~760.00 ms
+[2026-04-10 14:58:50.184] [AUDIO] Output audio chunk #4 | bytes=30720 | samples=15360 | ~960.00 ms
+[2026-04-10 14:58:50.188] [AUDIO] Output audio chunk #5 | bytes=21440 | samples=10720 | ~670.00 ms
+[2026-04-10 14:58:50.188] [ASSISTANT] Response audio completed | chunks=6 | bytes=113600 | samples=56800 | ~3550.00 ms
+[2026-04-10 14:58:50.566] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:58:51.147] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:58:51.936] [UDP] UDP audio paced send: 26 chunks of 960 bytes
+[2026-04-10 14:58:52.907] [UDP] UDP audio paced send: 32 chunks of 960 bytes
+[2026-04-10 14:58:53.608] [UDP] UDP audio paced send: 23 chunks of 960 bytes
+[2026-04-10 14:58:53.678] [UDP] UDP audio paced send: 2 chunks of 960 bytes
+[2026-04-10 14:58:53.680] [UDP] UDP audio end marker sent to ('10.19.187.137', 9999)
+[2026-04-10 14:58:53.681] [XAI] Response completed | tokens=264
+[2026-04-10 14:58:53.681] [INFO] Assistant response: Oh, bonjour! Ça va? What can I help with today?
+[2026-04-10 14:58:53.681] [UDP] UDP target addr: ('10.19.187.137', 9999)
+[2026-04-10 14:58:53.681] [UDP] UDP JSON sent to ('10.19.187.137', 9999): {"type": "assistant_response", "value": "Oh, bonjour! Ça va? What can I help with today?", "final": true, "timestamp": "2026-04-10T14:58:53"}
+[2026-04-10 14:58:57.301] [TURN] New audio turn #1 -> initial seq=276
+[2026-04-10 14:58:57.508] [STAT] [STAT] seq=301 | buf=0 | rec=300 | lost=1 (0.33%)
+[2026-04-10 14:59:01.099] [STAT] [STAT] seq=601 | buf=0 | rec=600 | lost=1 (0.17%)
+[2026-04-10 14:59:02.060] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 14:59:02.060] [TURN] Input turn closed | flushed=0 | dropped_out_of_order=0
+[2026-04-10 14:59:02.060] [TURN] COMMIT sent to xAI
+[2026-04-10 14:59:02.473] [XAI] xAI confirmed commit
+[2026-04-10 14:59:02.679] [USER] User transcription: Nothing, you just practice some French.
+[2026-04-10 14:59:03.509] [AUDIO] Output audio chunk #1 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:59:03.704] [AUDIO] Output audio chunk #2 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:59:03.859] [AUDIO] Output audio chunk #3 | bytes=24320 | samples=12160 | ~760.00 ms
+[2026-04-10 14:59:04.090] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:59:04.580] [AUDIO] Output audio chunk #4 | bytes=30720 | samples=15360 | ~960.00 ms
+[2026-04-10 14:59:04.670] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:59:04.689] [AUDIO] Output audio chunk #5 | bytes=46400 | samples=23200 | ~1450.00 ms
+[2026-04-10 14:59:04.690] [ASSISTANT] Response audio completed | chunks=6 | bytes=138560 | samples=69280 | ~4330.00 ms
+[2026-04-10 14:59:05.453] [UDP] UDP audio paced send: 26 chunks of 960 bytes
+[2026-04-10 14:59:06.424] [UDP] UDP audio paced send: 32 chunks of 960 bytes
+[2026-04-10 14:59:07.905] [UDP] UDP audio paced send: 49 chunks of 960 bytes
+[2026-04-10 14:59:07.975] [UDP] UDP audio paced send: 2 chunks of 960 bytes
+[2026-04-10 14:59:07.978] [UDP] UDP audio end marker sent to ('10.19.187.137', 9999)
+[2026-04-10 14:59:07.978] [XAI] Response completed | tokens=413
+[2026-04-10 14:59:07.978] [INFO] Assistant response: Haha, d'accord! Oh là là, parfait! Anything fun on your mind?
+[2026-04-10 14:59:07.978] [UDP] UDP target addr: ('10.19.187.137', 9999)
+[2026-04-10 14:59:07.978] [UDP] UDP JSON sent to ('10.19.187.137', 9999): {"type": "assistant_response", "value": "Haha, d'accord! Oh là là, parfait! Anything fun on your mind?", "final": true, "timestamp": "2026-04-10T14:59:07"}
+[2026-04-10 14:59:11.800] [TURN] New audio turn #2 -> initial seq=664
+[2026-04-10 14:59:14.250] [LOSS] [LOSS] seq 855 lost -> filled with silence
+[2026-04-10 14:59:14.410] [STAT] [STAT] seq=902 | buf=0 | rec=900 | lost=2 (0.22%)
+[2026-04-10 14:59:14.948] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 14:59:14.957] [TURN] Input turn closed | flushed=0 | dropped_out_of_order=0
+[2026-04-10 14:59:14.958] [TURN] COMMIT sent to xAI
+[2026-04-10 14:59:15.351] [XAI] xAI confirmed commit
+[2026-04-10 14:59:15.583] [USER] User transcription: No, really, tell me something funny.
+[2026-04-10 14:59:16.611] [AUDIO] Output audio chunk #1 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:59:16.622] [AUDIO] Output audio chunk #2 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:59:16.789] [AUDIO] Output audio chunk #3 | bytes=24320 | samples=12160 | ~760.00 ms
+[2026-04-10 14:59:17.100] [AUDIO] Output audio chunk #4 | bytes=30720 | samples=15360 | ~960.00 ms
+[2026-04-10 14:59:17.192] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:59:17.403] [AUDIO] Output audio chunk #5 | bytes=61760 | samples=30880 | ~1930.00 ms
+[2026-04-10 14:59:17.412] [ASSISTANT] Response audio completed | chunks=6 | bytes=153920 | samples=76960 | ~4810.00 ms
+[2026-04-10 14:59:17.765] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:59:18.555] [UDP] UDP audio paced send: 26 chunks of 960 bytes
+[2026-04-10 14:59:19.526] [UDP] UDP audio paced send: 32 chunks of 960 bytes
+[2026-04-10 14:59:21.486] [UDP] UDP audio paced send: 65 chunks of 960 bytes
+[2026-04-10 14:59:21.556] [UDP] UDP audio paced send: 2 chunks of 960 bytes
+[2026-04-10 14:59:21.558] [UDP] UDP audio end marker sent to ('10.19.187.137', 9999)
+[2026-04-10 14:59:21.558] [XAI] Response completed | tokens=375
+[2026-04-10 14:59:21.559] [INFO] Assistant response: Why did the robot go on a diet? It had too many bytes! Beep boop!
+[2026-04-10 14:59:21.559] [UDP] UDP target addr: ('10.19.187.137', 9999)
+[2026-04-10 14:59:21.559] [UDP] UDP JSON sent to ('10.19.187.137', 9999): {"type": "assistant_response", "value": "Why did the robot go on a diet? It had too many bytes! Beep boop!", "final": true, "timestamp": "2026-04-10T14:59:21"}
+[2026-04-10 14:59:25.825] [TURN] New audio turn #3 -> initial seq=934
+[2026-04-10 14:59:28.930] [STAT] [STAT] seq=1202 | buf=0 | rec=1200 | lost=2 (0.17%)
+[2026-04-10 14:59:29.969] [LOSS] [LOSS] seq 1244 lost -> filled with silence
+[2026-04-10 14:59:29.987] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 14:59:29.987] [TURN] Input turn closed | flushed=0 | dropped_out_of_order=0
+[2026-04-10 14:59:29.988] [TURN] COMMIT sent to xAI
+[2026-04-10 14:59:30.946] [XAI] xAI confirmed commit
+[2026-04-10 14:59:30.955] [USER] User transcription: Do you know how to speak in Spanish?
+[2026-04-10 14:59:31.975] [AUDIO] Output audio chunk #1 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:59:31.986] [AUDIO] Output audio chunk #2 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:59:32.146] [AUDIO] Output audio chunk #3 | bytes=21760 | samples=10880 | ~680.00 ms
+[2026-04-10 14:59:32.556] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:59:32.749] [AUDIO] Output audio chunk #4 | bytes=30720 | samples=15360 | ~960.00 ms
+[2026-04-10 14:59:32.815] [AUDIO] Output audio chunk #5 | bytes=43520 | samples=21760 | ~1360.00 ms
+[2026-04-10 14:59:33.012] [ASSISTANT] Response audio completed | chunks=7 | bytes=169280 | samples=84640 | ~5290.00 ms
+[2026-04-10 14:59:33.136] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:59:33.828] [UDP] UDP audio paced send: 23 chunks of 960 bytes
+[2026-04-10 14:59:34.799] [UDP] UDP audio paced send: 32 chunks of 960 bytes
+[2026-04-10 14:59:36.189] [UDP] UDP audio paced send: 46 chunks of 960 bytes
+[2026-04-10 14:59:37.339] [UDP] UDP audio paced send: 38 chunks of 960 bytes
+[2026-04-10 14:59:37.409] [UDP] UDP audio paced send: 2 chunks of 960 bytes
+[2026-04-10 14:59:37.411] [UDP] UDP audio end marker sent to ('10.19.187.137', 9999)
+[2026-04-10 14:59:37.411] [XAI] Response completed | tokens=431
+[2026-04-10 14:59:37.411] [INFO] Assistant response: ¡Sí, claro que sí! Hola, ¿qué tal? What would you like to chat about en español?
+[2026-04-10 14:59:37.411] [UDP] UDP target addr: ('10.19.187.137', 9999)
+[2026-04-10 14:59:37.412] [UDP] UDP JSON sent to ('10.19.187.137', 9999): {"type": "assistant_response", "value": "¡Sí, claro que sí! Hola, ¿qué tal? What would you like to chat about en español?", "final": true, "timestamp": "2026-04-10T14:59:37"}
+[2026-04-10 14:59:39.856] [TURN] New audio turn #4 -> initial seq=1260
+[2026-04-10 14:59:42.381] [STAT] [STAT] seq=1503 | buf=0 | rec=1500 | lost=3 (0.20%)
+[2026-04-10 14:59:43.258] [LOSS] [LOSS] seq 1520 lost -> filled with silence
+[2026-04-10 14:59:43.288] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 14:59:43.289] [TURN] Input turn closed | flushed=0 | dropped_out_of_order=0
+[2026-04-10 14:59:43.289] [TURN] COMMIT sent to xAI
+[2026-04-10 14:59:43.815] [XAI] xAI confirmed commit
+[2026-04-10 14:59:47.504] [USER] User transcription: Cuéntame una historia que sea bastante larga.
+[2026-04-10 14:59:48.362] [AUDIO] Output audio chunk #1 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:59:48.379] [AUDIO] Output audio chunk #2 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 14:59:48.393] [AUDIO] Output audio chunk #3 | bytes=24320 | samples=12160 | ~760.00 ms
+[2026-04-10 14:59:48.406] [AUDIO] Output audio chunk #4 | bytes=30720 | samples=15360 | ~960.00 ms
+[2026-04-10 14:59:48.442] [AUDIO] Output audio chunk #5 | bytes=43520 | samples=21760 | ~1360.00 ms
+[2026-04-10 14:59:48.943] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:59:49.524] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 14:59:50.315] [UDP] UDP audio paced send: 26 chunks of 960 bytes
+[2026-04-10 14:59:51.286] [UDP] UDP audio paced send: 32 chunks of 960 bytes
+[2026-04-10 14:59:52.675] [UDP] UDP audio paced send: 46 chunks of 960 bytes
+[2026-04-10 14:59:54.245] [UDP] UDP audio paced send: 52 chunks of 960 bytes
+[2026-04-10 14:59:55.291] [AUDIO] Output audio chunk #25 | bytes=62720 | samples=31360 | ~1960.00 ms
+[2026-04-10 14:59:56.026] [UDP] UDP audio paced send: 59 chunks of 960 bytes
+[2026-04-10 14:59:58.016] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 14:59:59.356] [ASSISTANT] Response audio completed | chunks=38 | bytes=2112320 | samples=1056160 | ~66010.00 ms
+[2026-04-10 15:00:00.006] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:01.997] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:03.988] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:05.977] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:07.968] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:09.959] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:11.949] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:13.940] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:15.930] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:17.920] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:19.910] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:21.901] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:23.891] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:25.881] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:27.872] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:29.862] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:31.852] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:33.843] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:35.833] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:37.824] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:39.807] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:41.797] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:43.787] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:45.777] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:47.768] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:49.758] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:51.749] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:53.739] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:00:55.369] [UDP] UDP audio paced send: 54 chunks of 960 bytes
+[2026-04-10 15:00:55.439] [UDP] UDP audio paced send: 2 chunks of 960 bytes
+[2026-04-10 15:00:55.441] [UDP] UDP audio end marker sent to ('10.19.187.137', 9999)
+[2026-04-10 15:00:55.441] [XAI] Response completed | tokens=3699
+[2026-04-10 15:00:55.442] [INFO] Assistant response: ¡Vale! Érase una vez, en un bosque encantado, un pequeño zorro llamado Zorro que soñaba con volar. Todos los días, trepaba a la colina más alta y miraba las águilas surcando el cielo. ¡Yo también volaré algún día!, decía. Un día, Zorro encontró una pluma mágica que brillaba como el sol. La pluma le susurró: Si me ayudas a tres amigos, te daré alas. Zorro aceptó emocionado. Primero, ayudó a un conejo atrapado en una red, liberándolo con astucia. ¡Gracias, amigo!, saltó el conejo. Luego, guió a un búho ciego a través de la niebla hasta su nido, usando su olfato agudo. Eres un héroe, ululó el búho. Por último, calmó a un río furioso que amenazaba el pueblo, cantándole una canción suave hasta que se aquietó. Los animales aplaudieron. La pluma brilló fuerte y se transformó en alas doradas. Zorro voló alto, libre y feliz, pero siempre volvía a ayudar a sus amigos. Y así, vivió aventuras eternas en el cielo del bosque. ¿Te gustó? ¿Quieres otra?
+[2026-04-10 15:00:55.442] [UDP] UDP target addr: ('10.19.187.137', 9999)
+[2026-04-10 15:00:55.442] [UDP] UDP JSON sent to ('10.19.187.137', 9999): {"type": "assistant_response", "value": "¡Vale! Érase una vez, en un bosque encantado, un pequeño zorro llamado Zorro que soñaba con volar. Todos los días, trepaba a la colina más alta y miraba las águilas surcando el cielo. ¡Yo también volaré algún día!, decía. Un día, Zorro encontró una pluma mágica que brillaba como el sol. La pluma le susurró: Si me ayudas a tres amigos, te daré alas. Zorro aceptó emocionado. Primero, ayudó a un conejo atrapado en una red, liberándolo con astucia. ¡Gracias, amigo!, saltó el conejo. Luego, guió a un búho ciego a través de la niebla hasta su nido, usando su olfato agudo. Eres un héroe, ululó el búho. Por último, calmó a un río furioso que amenazaba el pueblo, cantándole una canción suave hasta que se aquietó. Los animales aplaudieron. La pluma brilló fuerte y se transformó en alas doradas. Zorro voló alto, libre y feliz, pero siempre volvía a ayudar a sus amigos. Y así, vivió aventuras eternas en el cielo del bosque. ¿Te gustó? ¿Quieres otra?", "final": true, "timestamp": "2026-04-10T15:00:55"}
+[2026-04-10 15:00:59.421] [TURN] New audio turn #5 -> initial seq=1563
+[2026-04-10 15:01:02.517] [STAT] [STAT] seq=1804 | buf=0 | rec=1800 | lost=4 (0.22%)
+[2026-04-10 15:01:03.811] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 15:01:03.821] [TURN] Input turn closed | flushed=0 | dropped_out_of_order=0
+[2026-04-10 15:01:03.822] [TURN] COMMIT sent to xAI
+[2026-04-10 15:01:04.239] [XAI] xAI confirmed commit
+[2026-04-10 15:01:04.557] [USER] User transcription: Sí, pero esta vez cuéntame, cuéntamelo en inglés.
+[2026-04-10 15:01:05.535] [AUDIO] Output audio chunk #1 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 15:01:05.588] [AUDIO] Output audio chunk #2 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 15:01:05.769] [AUDIO] Output audio chunk #3 | bytes=24320 | samples=12160 | ~760.00 ms
+[2026-04-10 15:01:06.115] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 15:01:06.345] [AUDIO] Output audio chunk #4 | bytes=30720 | samples=15360 | ~960.00 ms
+[2026-04-10 15:01:06.357] [AUDIO] Output audio chunk #5 | bytes=43520 | samples=21760 | ~1360.00 ms
+[2026-04-10 15:01:06.695] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 15:01:07.485] [UDP] UDP audio paced send: 26 chunks of 960 bytes
+[2026-04-10 15:01:08.455] [UDP] UDP audio paced send: 32 chunks of 960 bytes
+[2026-04-10 15:01:09.845] [UDP] UDP audio paced send: 46 chunks of 960 bytes
+[2026-04-10 15:01:11.415] [UDP] UDP audio paced send: 52 chunks of 960 bytes
+[2026-04-10 15:01:13.195] [UDP] UDP audio paced send: 59 chunks of 960 bytes
+[2026-04-10 15:01:14.438] [AUDIO] Output audio chunk #25 | bytes=62720 | samples=31360 | ~1960.00 ms
+[2026-04-10 15:01:15.186] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:17.176] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:19.013] [ASSISTANT] Response audio completed | chunks=37 | bytes=2085440 | samples=1042720 | ~65170.00 ms
+[2026-04-10 15:01:19.167] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:21.157] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:23.147] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:25.138] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:27.129] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:29.119] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:31.110] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:33.101] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:35.091] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:37.074] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:39.064] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:41.055] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:43.045] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:45.036] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:47.026] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:49.016] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:51.007] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:52.997] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:54.987] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:56.978] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:01:58.968] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:02:00.959] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:02:02.949] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:02:04.939] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:02:06.929] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:02:08.918] [UDP] UDP audio paced send: 66 chunks of 960 bytes
+[2026-04-10 15:02:11.658] [UDP] UDP audio paced send: 91 chunks of 960 bytes
+[2026-04-10 15:02:11.748] [UDP] UDP audio paced send: 2 chunks of 960 bytes
+[2026-04-10 15:02:11.750] [UDP] UDP audio end marker sent to ('10.19.187.137', 9999)
+[2026-04-10 15:02:11.750] [XAI] Response completed | tokens=3632
+[2026-04-10 15:02:11.751] [INFO] Assistant response: Sure! Once upon a time, in a magical forest, a little fox named Fox dreamed of flying. Every day, he'd climb the tallest hill and watch eagles soar. I'll fly someday too! he'd say. One day, Fox found a glowing magical feather. It whispered, Help three friends, and I'll give you wings. Fox agreed, thrilled. First, he freed a rabbit stuck in a net with clever tricks. Thanks, friend! hopped the rabbit. Next, he guided a blind owl through thick fog to its nest, using his sharp nose. You're a hero, hooted the owl. Finally, he soothed a raging river threatening the village by singing it a gentle song until it calmed. The animals cheered. The feather glowed bright, turning into golden wings. Fox flew high, free and joyful, but always returned to help his friends. And so, he had endless adventures in the forest sky. Like it? Want more?
+[2026-04-10 15:02:11.751] [UDP] UDP target addr: ('10.19.187.137', 9999)
+[2026-04-10 15:02:11.751] [UDP] UDP JSON sent to ('10.19.187.137', 9999): {"type": "assistant_response", "value": "Sure! Once upon a time, in a magical forest, a little fox named Fox dreamed of flying. Every day, he'd climb the tallest hill and watch eagles soar. I'll fly someday too! he'd say. One day, Fox found a glowing magical feather. It whispered, Help three friends, and I'll give you wings. Fox agreed, thrilled. First, he freed a rabbit stuck in a net with clever tricks. Thanks, friend! hopped the rabbit. Next, he guided a blind owl through thick fog to its nest, using his sharp nose. You're a hero, hooted the owl. Finally, he soothed a raging river threatening the village by singing it a gentle song until it calmed. The animals cheered. The feather glowed bright, turning into golden wings. Fox flew high, free and joyful, but always returned to help his friends. And so, he had endless adventures in the forest sky. Like it? Want more?", "final": true, "timestamp": "2026-04-10T15:02:11"}

@@ -1,0 +1,38 @@
+[2026-04-10 12:05:13.107] [START] Connected to xAI realtime | input_rate=16000 | output_rate=16000
+[2026-04-10 12:05:13.108] [INFO] Output WAV file: audio_out_2026-04-10_12-05-11.wav
+[2026-04-10 12:05:13.108] [INFO] Log file: bridge_log_2026-04-10_12-05-11.txt
+[2026-04-10 12:05:13.108] [CONFIG] Bridge config | input_rate=16000 | output_rate=16000 | samples_per_packet=160 | packet_audio_size=320
+[2026-04-10 12:05:13.109] [START] UDP server started
+[2026-04-10 12:05:13.109] [INFO] UDP port: 9999
+[2026-04-10 12:05:13.109] [INFO] Jitter buffer: 25 packets (~250 ms)
+[2026-04-10 12:05:13.356] [XAI] Session updated
+[2026-04-10 12:05:19.349] [INIT] First packet received -> seq=2482
+[2026-04-10 12:05:22.015] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 12:05:22.025] [TURN] Input turn closed | flushed=0 | dropped_out_of_order=0
+[2026-04-10 12:05:22.026] [TURN] COMMIT sent to xAI
+[2026-04-10 12:05:22.027] [TURN] New audio turn #1 -> initial seq=2717
+[2026-04-10 12:05:22.453] [XAI] xAI confirmed commit
+[2026-04-10 12:05:22.658] [USER] User transcription: Hola, hola, ¿cómo estás?
+[2026-04-10 12:05:25.937] [AUDIO] Output audio chunk #1 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 12:05:26.006] [AUDIO] Output audio chunk #2 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 12:05:26.060] [AUDIO] Output audio chunk #3 | bytes=24320 | samples=12160 | ~760.00 ms
+[2026-04-10 12:05:26.145] [AUDIO] Output audio chunk #4 | bytes=30720 | samples=15360 | ~960.00 ms
+[2026-04-10 12:05:26.181] [AUDIO] Output audio chunk #5 | bytes=53440 | samples=26720 | ~1670.00 ms
+[2026-04-10 12:05:26.182] [ASSISTANT] Response audio completed | chunks=6 | bytes=145600 | samples=72800 | ~4550.00 ms
+[2026-04-10 12:05:26.509] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 12:05:27.080] [UDP] UDP audio paced send: 19 chunks of 960 bytes
+[2026-04-10 12:05:27.861] [UDP] UDP audio paced send: 26 chunks of 960 bytes
+[2026-04-10 12:05:28.823] [UDP] UDP audio paced send: 32 chunks of 960 bytes
+[2026-04-10 12:05:30.504] [UDP] UDP audio paced send: 56 chunks of 960 bytes
+[2026-04-10 12:05:30.565] [UDP] UDP audio paced send: 2 chunks of 960 bytes
+[2026-04-10 12:05:30.565] [UDP] UDP audio end marker sent to ('10.19.187.137', 9999)
+[2026-04-10 12:05:30.565] [XAI] Response completed | tokens=351
+[2026-04-10 12:05:30.566] [INFO] Assistant response: ¡Hola! Estoy genial, gracias por preguntar. ¿En qué puedo ayudarte hoy?
+[2026-04-10 12:05:30.566] [UDP] UDP target addr: ('10.19.187.137', 9999)
+[2026-04-10 12:05:30.566] [UDP] UDP JSON sent to ('10.19.187.137', 9999): {"type": "assistant_response", "value": "¡Hola! Estoy genial, gracias por preguntar. ¿En qué puedo ayudarte hoy?", "final": true, "timestamp": "2026-04-10T12:05:30"}
+[2026-04-10 12:05:34.747] [STAT] [STAT] seq=2782 | buf=0 | rec=300 | lost=0 (0.00%)
+[2026-04-10 12:05:37.983] [STAT] [STAT] seq=3082 | buf=0 | rec=600 | lost=0 (0.00%)
+[2026-04-10 12:05:41.586] [STAT] [STAT] seq=3382 | buf=0 | rec=900 | lost=0 (0.00%)
+[2026-04-10 12:05:45.197] [STAT] [STAT] seq=3682 | buf=0 | rec=1200 | lost=0 (0.00%)
+[2026-04-10 12:05:46.168] [LOSS] [LOSS] seq 3688 lost -> filled with silence
+[2026-04-10 12:05:46.171] [LOSS] [LOSS] seq 3689 lost -> filled with silence

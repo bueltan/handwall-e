@@ -1,13 +1,22 @@
 from dataclasses import dataclass
 
 
+from dataclasses import dataclass
+
+
 @dataclass(frozen=True)
 class UdpConfig:
     """Configuration values related to UDP audio transport."""
 
-    server_port: int = 5000
+    server_port: int = 9999
     buffer_size: int = 4096
-    sample_rate: int = 16000
+
+    # ESP32 -> server
+    input_sample_rate: int = 16000
+
+    # xAI -> server -> ESP32
+    output_sample_rate: int = 16000
+
     samples_per_packet: int = 160
     metadata_size: int = 4
     jitter_ms: int = 250
@@ -22,7 +31,7 @@ class UdpConfig:
     @property
     def packet_duration_ms(self) -> float:
         """Return the duration of each UDP packet in milliseconds."""
-        return (self.samples_per_packet / self.sample_rate) * 1000
+        return (self.samples_per_packet / self.input_sample_rate) * 1000
 
     @property
     def jitter_size(self) -> int:

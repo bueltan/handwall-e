@@ -65,7 +65,7 @@ xAI WebSocket → output audio events → PCM decode → WAV output file
 
 ### Audio format
 
-- `SAMPLE_RATE = 16000`  
+- `input_sample_rate = 16000`  
   Audio sample rate in Hz.
 
 - `SAMPLES_PER_PACKET = 160`  

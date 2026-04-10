@@ -5,7 +5,7 @@ from pathlib import Path
 class OutputWaveWriter:
     """Handles writing assistant output audio to a WAV file."""
 
-    def __init__(self, wav_file: str, sample_rate: int) -> None:
+    def __init__(self, wav_file: str, input_sample_rate: int) -> None:
         base_dir = Path(__file__).resolve().parent.parent
         wav_dir = base_dir / "audios"
         wav_dir.mkdir(parents=True, exist_ok=True)
@@ -14,7 +14,7 @@ class OutputWaveWriter:
         self._wave = wave.open(str(self.wav_path), "wb")
         self._wave.setnchannels(1)
         self._wave.setsampwidth(2)
-        self._wave.setframerate(sample_rate)
+        self._wave.setframerate(input_sample_rate)
         self._closed = False
 
     def write(self, pcm_data: bytes) -> None:

@@ -4,7 +4,6 @@ from modules.upd_xai_bridget import UdpToXaiBridge
 
 
 
-
 async def main() -> None:
     """Application entry point."""
     bridge = UdpToXaiBridge()

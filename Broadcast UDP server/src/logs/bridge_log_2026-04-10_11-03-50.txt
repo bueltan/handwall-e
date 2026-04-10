@@ -1,0 +1,99 @@
+[2026-04-10 11:03:51.468] [START] Connected to xAI realtime | input_rate=16000 | output_rate=16000
+[2026-04-10 11:03:51.468] [INFO] Output WAV file: audio_out_2026-04-10_11-03-50.wav
+[2026-04-10 11:03:51.468] [INFO] Log file: bridge_log_2026-04-10_11-03-50.txt
+[2026-04-10 11:03:51.469] [CONFIG] Bridge config | input_rate=16000 | output_rate=16000 | samples_per_packet=160 | packet_audio_size=320
+[2026-04-10 11:03:51.469] [START] UDP server started
+[2026-04-10 11:03:51.469] [INFO] UDP port: 9999
+[2026-04-10 11:03:51.469] [INFO] Jitter buffer: 25 packets (~250 ms)
+[2026-04-10 11:03:52.239] [XAI] Session updated
+[2026-04-10 11:03:56.351] [INIT] First packet received -> seq=437
+[2026-04-10 11:03:59.818] [STAT] [STAT] seq=737 | buf=0 | rec=300 | lost=0 (0.00%)
+[2026-04-10 11:04:00.094] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 11:04:00.095] [TURN] Input turn closed | flushed=0 | dropped_out_of_order=0
+[2026-04-10 11:04:00.095] [TURN] COMMIT sent to xAI
+[2026-04-10 11:04:00.096] [TURN] New audio turn #1 -> initial seq=757
+[2026-04-10 11:04:01.062] [XAI] xAI confirmed commit
+[2026-04-10 11:04:01.363] [USER] User transcription: Hola hola, buenas tardes.
+[2026-04-10 11:04:02.707] [AUDIO] Output audio chunk #1 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 11:04:03.268] [UDP] UDP audio paced send: 28 chunks of 640 bytes
+[2026-04-10 11:04:03.269] [AUDIO] Output audio chunk #2 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 11:04:03.830] [UDP] UDP audio paced send: 28 chunks of 640 bytes
+[2026-04-10 11:04:03.831] [AUDIO] Output audio chunk #3 | bytes=20480 | samples=10240 | ~640.00 ms
+[2026-04-10 11:04:04.472] [UDP] UDP audio paced send: 32 chunks of 640 bytes
+[2026-04-10 11:04:04.473] [AUDIO] Output audio chunk #4 | bytes=30720 | samples=15360 | ~960.00 ms
+[2026-04-10 11:04:05.434] [UDP] UDP audio paced send: 48 chunks of 640 bytes
+[2026-04-10 11:04:05.435] [AUDIO] Output audio chunk #5 | bytes=20800 | samples=10400 | ~650.00 ms
+[2026-04-10 11:04:06.097] [UDP] UDP audio paced send: 33 chunks of 640 bytes
+[2026-04-10 11:04:06.138] [UDP] UDP audio paced send: 2 chunks of 640 bytes
+[2026-04-10 11:04:06.138] [ASSISTANT] Response audio completed | chunks=6 | bytes=109120 | samples=54560 | ~3410.00 ms
+[2026-04-10 11:04:06.139] [UDP] UDP audio end marker sent to ('10.19.187.137', 9999)
+[2026-04-10 11:04:06.139] [XAI] Response completed | tokens=329
+[2026-04-10 11:04:06.139] [INFO] Assistant response: ¡Hola hola! Buenas tardes. ¿En qué puedo ayudarte hoy?
+[2026-04-10 11:04:06.139] [UDP] UDP target addr: ('10.19.187.137', 9999)
+[2026-04-10 11:04:06.139] [UDP] UDP JSON sent to ('10.19.187.137', 9999): {"type": "assistant_response", "value": "¡Hola hola! Buenas tardes. ¿En qué puedo ayudarte hoy?", "final": true, "timestamp": "2026-04-10T11:04:06"}
+[2026-04-10 11:04:11.712] [LOSS] [LOSS] seq 763 lost -> filled with silence
+[2026-04-10 11:04:11.717] [LOSS] [LOSS] seq 764 lost -> filled with silence
+[2026-04-10 11:04:11.734] [LOSS] [LOSS] seq 797 lost -> filled with silence
+[2026-04-10 11:04:11.737] [LOSS] [LOSS] seq 798 lost -> filled with silence
+[2026-04-10 11:04:11.751] [LOSS] [LOSS] seq 799 lost -> filled with silence
+[2026-04-10 11:04:12.126] [LOSS] [LOSS] seq 800 lost -> filled with silence
+[2026-04-10 11:04:12.129] [LOSS] [LOSS] seq 801 lost -> filled with silence
+[2026-04-10 11:04:12.139] [LOSS] [LOSS] seq 803 lost -> filled with silence
+[2026-04-10 11:04:12.141] [LOSS] [LOSS] seq 804 lost -> filled with silence
+[2026-04-10 11:04:12.144] [LOSS] [LOSS] seq 805 lost -> filled with silence
+[2026-04-10 11:04:12.146] [LOSS] [LOSS] seq 806 lost -> filled with silence
+[2026-04-10 11:04:12.158] [LOSS] [LOSS] seq 808 lost -> filled with silence
+[2026-04-10 11:04:12.226] [LOSS] [LOSS] seq 810 lost -> filled with silence
+[2026-04-10 11:04:12.294] [LOSS] [LOSS] seq 824 lost -> filled with silence
+[2026-04-10 11:04:12.353] [LOSS] [LOSS] seq 826 lost -> filled with silence
+[2026-04-10 11:04:12.406] [LOSS] [LOSS] seq 827 lost -> filled with silence
+[2026-04-10 11:04:12.474] [LOSS] [LOSS] seq 832 lost -> filled with silence
+[2026-04-10 11:04:13.150] [LOSS] [LOSS] seq 906 lost -> filled with silence
+[2026-04-10 11:04:13.153] [LOSS] [LOSS] seq 907 lost -> filled with silence
+[2026-04-10 11:04:14.422] [STAT] [STAT] seq=1056 | buf=0 | rec=600 | lost=19 (3.17%)
+[2026-04-10 11:04:18.094] [STAT] [STAT] seq=1356 | buf=0 | rec=900 | lost=19 (2.11%)
+[2026-04-10 11:04:19.895] [TURN] UDP COMMIT signal received from ('10.19.187.137', 9999)
+[2026-04-10 11:04:19.905] [TURN] Input turn closed | flushed=0 | dropped_out_of_order=0
+[2026-04-10 11:04:19.906] [TURN] COMMIT sent to xAI
+[2026-04-10 11:04:20.729] [XAI] xAI confirmed commit
+[2026-04-10 11:04:20.738] [USER] User transcription: Justamente estoy, estoy estudiando que también se escucha, ¿sí puedes darnos oración algo larga o extensa?
+[2026-04-10 11:04:21.963] [AUDIO] Output audio chunk #1 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 11:04:22.534] [UDP] UDP audio paced send: 28 chunks of 640 bytes
+[2026-04-10 11:04:22.536] [AUDIO] Output audio chunk #2 | bytes=17920 | samples=8960 | ~560.00 ms
+[2026-04-10 11:04:23.097] [UDP] UDP audio paced send: 28 chunks of 640 bytes
+[2026-04-10 11:04:23.100] [AUDIO] Output audio chunk #3 | bytes=24320 | samples=12160 | ~760.00 ms
+[2026-04-10 11:04:23.862] [UDP] UDP audio paced send: 38 chunks of 640 bytes
+[2026-04-10 11:04:23.872] [AUDIO] Output audio chunk #4 | bytes=30720 | samples=15360 | ~960.00 ms
+[2026-04-10 11:04:24.834] [UDP] UDP audio paced send: 48 chunks of 640 bytes
+[2026-04-10 11:04:24.844] [AUDIO] Output audio chunk #5 | bytes=43520 | samples=21760 | ~1360.00 ms
+[2026-04-10 11:04:26.206] [UDP] UDP audio paced send: 68 chunks of 640 bytes
+[2026-04-10 11:04:27.778] [UDP] UDP audio paced send: 78 chunks of 640 bytes
+[2026-04-10 11:04:29.549] [UDP] UDP audio paced send: 88 chunks of 640 bytes
+[2026-04-10 11:04:31.521] [UDP] UDP audio paced send: 98 chunks of 640 bytes
+[2026-04-10 11:04:33.494] [UDP] UDP audio paced send: 98 chunks of 640 bytes
+[2026-04-10 11:04:35.464] [UDP] UDP audio paced send: 98 chunks of 640 bytes
+[2026-04-10 11:04:37.436] [UDP] UDP audio paced send: 98 chunks of 640 bytes
+[2026-04-10 11:04:39.408] [UDP] UDP audio paced send: 98 chunks of 640 bytes
+[2026-04-10 11:04:41.379] [UDP] UDP audio paced send: 98 chunks of 640 bytes
+[2026-04-10 11:04:43.351] [UDP] UDP audio paced send: 98 chunks of 640 bytes
+[2026-04-10 11:04:45.321] [UDP] UDP audio paced send: 98 chunks of 640 bytes
+[2026-04-10 11:04:47.234] [UDP] UDP audio paced send: 95 chunks of 640 bytes
+[2026-04-10 11:04:47.285] [UDP] UDP audio paced send: 2 chunks of 640 bytes
+[2026-04-10 11:04:47.285] [ASSISTANT] Response audio completed | chunks=17 | bytes=804160 | samples=402080 | ~25130.00 ms
+[2026-04-10 11:04:47.285] [UDP] UDP audio end marker sent to ('10.19.187.137', 9999)
+[2026-04-10 11:04:47.286] [XAI] Response completed | tokens=1731
+[2026-04-10 11:04:47.286] [INFO] Assistant response: ¡Claro que sí! Aquí va una oración bien larga para que practiques: En un soleado día de primavera, mientras el viento jugaba con las hojas de los árboles centenarios del parque antiguo, un pequeño robot curioso como yo, WALL-E, salió a explorar el mundo lleno de maravillas, recolectando tesoros olvidados y soñando con aventuras infinitas junto a sus amigos humanos. ¿Quieres otra o algo más?
+[2026-04-10 11:04:47.286] [UDP] UDP target addr: ('10.19.187.137', 9999)
+[2026-04-10 11:04:47.286] [UDP] UDP JSON sent to ('10.19.187.137', 9999): {"type": "assistant_response", "value": "¡Claro que sí! Aquí va una oración bien larga para que practiques: En un soleado día de primavera, mientras el viento jugaba con las hojas de los árboles centenarios del parque antiguo, un pequeño robot curioso como yo, WALL-E, salió a explorar el mundo lleno de maravillas, recolectando tesoros olvidados y soñando con aventuras infinitas junto a sus amigos humanos. ¿Quieres otra o algo más?", "final": true, "timestamp": "2026-04-10T11:04:47"}
+[2026-04-10 11:04:53.505] [TURN] New audio turn #2 -> initial seq=1509
+[2026-04-10 11:04:55.207] [STAT] [STAT] seq=1656 | buf=0 | rec=1200 | lost=19 (1.58%)
+[2026-04-10 11:04:59.039] [STAT] [STAT] seq=1956 | buf=0 | rec=1500 | lost=19 (1.27%)
+[2026-04-10 11:05:01.904] [LOSS] [LOSS] seq 2161 lost -> filled with silence
+[2026-04-10 11:05:02.414] [STAT] [STAT] seq=2257 | buf=0 | rec=1800 | lost=20 (1.11%)
+[2026-04-10 11:05:06.014] [STAT] [STAT] seq=2557 | buf=0 | rec=2100 | lost=20 (0.95%)
+[2026-04-10 11:05:09.690] [STAT] [STAT] seq=2857 | buf=0 | rec=2400 | lost=20 (0.83%)
+[2026-04-10 11:05:12.155] [LOSS] [LOSS] seq 3015 lost -> filled with silence
+[2026-04-10 11:05:13.374] [STAT] [STAT] seq=3158 | buf=0 | rec=2700 | lost=21 (0.78%)
+[2026-04-10 11:05:14.160] [LOSS] [LOSS] seq 3205 lost -> filled with silence
+[2026-04-10 11:05:17.164] [STAT] [STAT] seq=3459 | buf=0 | rec=3000 | lost=22 (0.73%)
+[2026-04-10 11:05:20.765] [STAT] [STAT] seq=3759 | buf=0 | rec=3300 | lost=22 (0.67%)
