@@ -1,3 +1,4 @@
+#include <app_state.h>
 #include <WiFi.h>
 #include <WiFiUdp.h>
 #include <SPI.h>
@@ -157,47 +158,165 @@ void taskTouch(void *pvParameters) {
   }
 }
 // Tarea de UDP
-void taskUDP(void *pvParameters) {
-  while (1) {
-    // solo enviar si WiFi está conectado
-    if (wifiStatus == WIFI_CONNECTED) {
-      // enviar ping cada pingInterval
-      if (millis() - lastPingTime > pingInterval) {
-        lastPingTime = millis();
-        udp.beginPacket(udpAddress, udpPort);
-        udp.print("PING");
-        udp.endPacket();
-      }
+void taskUDP(void *pvParameters)
+{
+    UdpPacket_t pkt;
+    bool commitPendingAfterDrain = false;
 
-      // revisar mensajes UDP entrantes
-      int packetSize = udp.parsePacket();
-      if (packetSize) {
-        char buffer[64];
-        int len = udp.read(buffer, sizeof(buffer)-1);
-        if (len > 0) buffer[len] = 0;
-        String msg = String(buffer);
-        if (msg == "PONG") {
-          lastPongTime = millis();
-          udpStatus = UDP_CONNECTED;
-          drawStatus();
-        } else {
-          drawMessage(msg);
+    while (true)
+    {
+        if (wifiStatus == WIFI_CONNECTED)
+        {
+            if (cancelRequested)
+            {
+                cancelRequested = false;
+                commitRequested = false;
+                commitPendingAfterDrain = false;
+
+                resetPlaybackBuffer();
+                clearUDPAudioQueue();
+
+                if (enqueueUDPControl("CANCEL"))
+                {
+                    if (currentScreen == SCREEN_MAIN)
+                        postStatus("Queued CANCEL");
+                }
+                else
+                {
+                    if (currentScreen == SCREEN_MAIN)
+                        postStatus("Queue CANCEL failed");
+                }
+            }
+
+            if (commitRequested)
+            {
+                commitRequested = false;
+                commitPendingAfterDrain = true;
+
+                if (currentScreen == SCREEN_MAIN)
+                    postStatus("Commit pending drain");
+            }
+
+            if (!udpSocketStarted)
+            {
+                logHeap("before udp.begin");
+                if (udp.begin(UDP_PORT))
+                {
+                    logHeap("after udp.begin ok");
+                    udpSocketStarted = true;
+                    lastPongTime = millis();
+
+                    if (currentScreen == SCREEN_MAIN)
+                        postLog("UDP socket ready");
+                }
+                else
+                {
+                    logHeap("after udp.begin failed");
+                    if (currentScreen == SCREEN_MAIN)
+                        postLog("udp.begin failed");
+
+                    vTaskDelay(500 / portTICK_PERIOD_MS);
+                    continue;
+                }
+            }
+
+            // 1) Siempre drenar primero audio pendiente
+            bool sentAudioThisLoop = false;
+            while (xQueueReceive(udpAudioQueue, &pkt, 0) == pdPASS)
+            {
+                sendPacket(pkt);
+                sentAudioThisLoop = true;
+
+                if (pkt.data != NULL)
+                {
+                    logHeap("before free audio");
+                    free(pkt.data);
+                    pkt.data = NULL;
+                    logHeap("after free audio");
+                }
+            }
+
+            // 2) Si hay commit pendiente, solo enviarlo cuando ya no queda audio
+            if (commitPendingAfterDrain && uxQueueMessagesWaiting(udpAudioQueue) == 0)
+            {
+                logHeap("before COMMIT");
+
+                if (enqueueUDPControl("COMMIT"))
+                {
+                    logHeap("after COMMIT enqueue");
+                    if (currentScreen == SCREEN_MAIN)
+                        postStatus("Queued COMMIT");
+                }
+                else
+                {
+                    logHeap("after COMMIT enqueue");
+                    if (currentScreen == SCREEN_MAIN)
+                        postStatus("Queue COMMIT failed");
+                }
+
+                commitPendingAfterDrain = false;
+            }
+
+            // 3) Ahora sí mandar control
+            while (xQueueReceive(udpControlQueue, &pkt, 0) == pdPASS)
+            {
+                sendPacket(pkt);
+
+                if (pkt.data != NULL)
+                {
+                    free(pkt.data);
+                    pkt.data = NULL;
+                }
+            }
+
+            if (currentScreen == SCREEN_MAIN && millis() - lastPingTime > PING_INTERVAL)
+            {
+                lastPingTime = millis();
+
+                const char *pingMsg = "PING";
+                udp.beginPacket(serverIP.c_str(), UDP_PORT);
+                udp.write((const uint8_t *)pingMsg, strlen(pingMsg));
+                udp.endPacket();
+            }
+
+            int packetSize = udp.parsePacket();
+            if (packetSize > 0)
+            {
+                uint8_t rxBuffer[1472];
+                int readLen = packetSize;
+
+                if (readLen > (int)sizeof(rxBuffer))
+                    readLen = sizeof(rxBuffer);
+
+                int len = udp.read(rxBuffer, readLen);
+                if (len > 0)
+                {
+                    handleIncomingUdpRawPacket(rxBuffer, len);
+                }
+            }
+
+            if (currentScreen == SCREEN_MAIN && millis() - lastPongTime > PONG_TIMEOUT)
+            {
+                udpStatus = DISCONNECTED;
+            }
         }
-      }
+        else
+        {
+            udpStatus = DISCONNECTED;
+            udpSocketStarted = false;
+            commitRequested = false;
 
-      // timeout de pong
-      if (millis() - lastPongTime > 3000) {
-        udpStatus = DISCONNECTED;
-        drawStatus();
-      }
+            if (!queuesClearedWhileDisconnected)
+            {
+                clearUDPAudioQueue();
+                clearUDPControlQueue();
+                queuesClearedWhileDisconnected = true;
+            }
+        }
+
+        vTaskDelay(2 / portTICK_PERIOD_MS);
     }
-    
-    // espera antes de la siguiente iteración
-    vTaskDelay(100 / portTICK_PERIOD_MS);
-  }
-}
-
-// ---------------------- SETUP ----------------------
+}// ---------------------- SETUP ----------------------
 void setup() {
   Serial.begin(115200);
   ts.begin();

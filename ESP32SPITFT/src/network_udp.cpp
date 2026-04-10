@@ -9,9 +9,33 @@
 #include "config.h"
 #include "ui_main.h"
 #include "esp_heap_caps.h"
+#include "audio_playback.h"
 
 static WiFiUDP udp;
 static bool queuesClearedWhileDisconnected = false;
+
+static bool isLikelyTextPacket(const uint8_t *data, int len)
+{
+    if (data == NULL || len <= 0)
+        return false;
+
+    for (int i = 0; i < len; ++i)
+    {
+        uint8_t c = data[i];
+
+        if (c == 0)
+            return false;
+
+        if (c == '\n' || c == '\r' || c == '\t')
+            continue;
+
+        if (c < 32 || c > 126)
+            return false;
+    }
+
+    return true;
+}
+
 
 void logHeap(const char *tag)
 {
@@ -55,8 +79,134 @@ static bool enqueuePacketToQueue(QueueHandle_t queue, const uint8_t *data, size_
             drawLog("queue full");
         return false;
     }
+
     logHeap("enqueue success");
     return true;
+}
+
+static String extractJsonStringValue(const String &json, const char *key)
+{
+    String keyToken = String("\"") + key + "\"";
+    int keyPos = json.indexOf(keyToken);
+    if (keyPos < 0)
+        return "";
+
+    int colonPos = json.indexOf(':', keyPos + keyToken.length());
+    if (colonPos < 0)
+        return "";
+
+    int firstQuote = json.indexOf('"', colonPos + 1);
+    if (firstQuote < 0)
+        return "";
+
+    String result = "";
+    bool escape = false;
+
+    for (int i = firstQuote + 1; i < json.length(); ++i)
+    {
+        char c = json[i];
+
+        if (escape)
+        {
+            switch (c)
+            {
+            case 'n':
+                result += '\n';
+                break;
+            case 'r':
+                result += '\r';
+                break;
+            case 't':
+                result += '\t';
+                break;
+            case '"':
+                result += '"';
+                break;
+            case '\\':
+                result += '\\';
+                break;
+            default:
+                result += c;
+                break;
+            }
+            escape = false;
+            continue;
+        }
+
+        if (c == '\\')
+        {
+            escape = true;
+            continue;
+        }
+
+        if (c == '"')
+        {
+            return result;
+        }
+
+        result += c;
+    }
+
+    return "";
+}
+
+static void handleIncomingUdpMessage(const String &msg)
+{
+    if (msg == "PONG")
+    {
+        lastPongTime = millis();
+        udpStatus = UDP_CONNECTED;
+
+        if (currentScreen == SCREEN_MAIN)
+            drawStatus("UDP OK");
+        return;
+    }
+
+    if (msg.startsWith("{"))
+    {
+        Serial.printf("[UDP JSON RAW] %s\n", msg.c_str());
+
+        int typeKeyPos = msg.indexOf("\"type\"");
+        if (typeKeyPos < 0)
+        {
+            if (currentScreen == SCREEN_MAIN)
+                drawLog("JSON missing type");
+            return;
+        }
+
+        String typeValue = extractJsonStringValue(msg, "type");
+        String valueText = extractJsonStringValue(msg, "value");
+
+        Serial.printf("[UDP JSON TYPE] %s\n", typeValue.c_str());
+        Serial.printf("[UDP JSON VALUE] %s\n", valueText.c_str());
+
+        if (typeValue == "assistant_response")
+        {
+            if (valueText.length() > 0)
+            {
+                if (currentScreen == SCREEN_MAIN)
+                {
+                    drawIncomingUDP(valueText.c_str());
+                    drawStatus("Assistant response received");
+                }
+            }
+            else
+            {
+                if (currentScreen == SCREEN_MAIN)
+                    drawLog("Assistant value empty");
+            }
+            return;
+        }
+
+        if (currentScreen == SCREEN_MAIN)
+            drawLog("Unknown JSON UDP");
+        return;
+    }
+
+    Serial.printf("[UDP TEXT] %s\n", msg.c_str());
+
+    if (currentScreen == SCREEN_MAIN)
+        drawStatus(msg.c_str());
 }
 
 void connectWiFi()
@@ -93,6 +243,7 @@ void connectWiFi()
         wifiStatus = DISCONNECTED;
         udpStatus = DISCONNECTED;
         udpSocketStarted = false;
+        resetPlaybackBuffer();
         drawStatus("WiFi FAILED");
     }
 }
@@ -151,6 +302,34 @@ static void sendPacket(const UdpPacket_t &pkt)
     }
 }
 
+static void handleIncomingUdpRawPacket(const uint8_t *data, int len)
+{
+    if (data == NULL || len <= 0)
+        return;
+
+    if (isLikelyTextPacket(data, len))
+    {
+        char textBuffer[512];
+        int copyLen = len;
+
+        if (copyLen >= (int)sizeof(textBuffer))
+            copyLen = sizeof(textBuffer) - 1;
+
+        memcpy(textBuffer, data, copyLen);
+        textBuffer[copyLen] = '\0';
+
+        String msg = String(textBuffer);
+        handleIncomingUdpMessage(msg);
+        return;
+    }
+
+    pushUdpAudioToPlayback(data, (size_t)len);
+
+    if (currentScreen == SCREEN_MAIN)
+    {
+        drawStatus("Receiving audio");
+    }
+}
 void taskUDP(void *pvParameters)
 {
     UdpPacket_t pkt;
@@ -159,9 +338,7 @@ void taskUDP(void *pvParameters)
     {
         if (wifiStatus == WIFI_CONNECTED)
         {
-
             if (commitRequested)
-
             {
                 logHeap("before COMMIT");
                 commitRequested = false;
@@ -183,7 +360,7 @@ void taskUDP(void *pvParameters)
             if (cancelRequested)
             {
                 cancelRequested = false;
-
+                resetPlaybackBuffer();
                 if (enqueueUDPControl("CANCEL"))
                 {
                     if (currentScreen == SCREEN_MAIN)
@@ -198,7 +375,7 @@ void taskUDP(void *pvParameters)
 
             if (!udpSocketStarted)
             {
-                    logHeap("before udp.begin");
+                logHeap("before udp.begin");
                 if (udp.begin(UDP_PORT))
                 {
                     logHeap("after udp.begin ok");
@@ -256,27 +433,16 @@ void taskUDP(void *pvParameters)
             int packetSize = udp.parsePacket();
             if (packetSize > 0)
             {
-                char buffer[128];
-                int len = udp.read(buffer, sizeof(buffer) - 1);
+                uint8_t rxBuffer[1472];
+                int readLen = packetSize;
 
+                if (readLen > (int)sizeof(rxBuffer))
+                    readLen = sizeof(rxBuffer);
+
+                int len = udp.read(rxBuffer, readLen);
                 if (len > 0)
                 {
-                    buffer[len] = 0;
-                    String msg = String(buffer);
-
-                    if (msg == "PONG")
-                    {
-                        lastPongTime = millis();
-                        udpStatus = UDP_CONNECTED;
-
-                        if (currentScreen == SCREEN_MAIN)
-                            drawStatus("UDP OK");
-                    }
-                    else
-                    {
-                        if (currentScreen == SCREEN_MAIN)
-                            drawStatus(msg.c_str());
-                    }
+                    handleIncomingUdpRawPacket(rxBuffer, len);
                 }
             }
 

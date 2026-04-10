@@ -2,7 +2,7 @@
 #include <cstdint>
 
 // ====================== NETWORK ======================
-constexpr int UDP_PORT = 5000;
+constexpr int UDP_PORT = 9999;
 
 // ====================== UI ======================
 constexpr int FONT_SIZE_S = 1;
