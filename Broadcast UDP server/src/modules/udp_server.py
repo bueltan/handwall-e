@@ -30,7 +30,7 @@ class UdpServer:
 
         # Last known peer that sent valid audio/control for the active session.
         self.remote_addr: Optional[Tuple[str, int]] = None
-
+            
     async def run(self) -> None:
         """Main UDP receive loop."""
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -69,7 +69,11 @@ class UdpServer:
             if data == b"COMMIT":
                 self.remote_addr = addr
                 self.logger.log(f"UDP COMMIT signal received from {addr}", "TURN")
+
+                await asyncio.sleep(0.08)  # 80 ms de gracia
+                self.jitter_buffer.process_ordered_audio(self.audio_queue)
                 self.jitter_buffer.close_input_turn(self.audio_queue)
+
                 await self.commit_queue.put("commit")
                 continue
 

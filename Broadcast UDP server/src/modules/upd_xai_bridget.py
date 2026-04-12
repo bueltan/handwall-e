@@ -32,11 +32,7 @@ class UdpToXaiBridge:
 
         self.audio_queue: asyncio.Queue = asyncio.Queue()
         self.commit_queue: asyncio.Queue = asyncio.Queue()
-        self.output_audio_done_event = asyncio.Event()
-        self.output_audio_done_event.set()
 
-        self.output_turn_finished = False
-        
         self.jitter_buffer = JitterBuffer(self.udp_config, self.logger)
         self.udp_message_sender = UdpMessageSender(self.logger)
 
@@ -58,6 +54,24 @@ class UdpToXaiBridge:
         )
 
         self.running = True
+
+    async def flush_pending_audio(self) -> None:
+        while True:
+            try:
+                pcm_data = self.audio_queue.get_nowait()
+            except asyncio.QueueEmpty:
+                break
+
+            if pcm_data is None:
+                break
+
+            ok = await self.xai_client.send_audio_append(pcm_data)
+            if not ok:
+                self.logger.log(
+                    "flush_pending_audio aborted: websocket disconnected",
+                    "WARN",
+                )
+                break
 
     async def websocket_sender(self) -> None:
         """
@@ -88,9 +102,18 @@ class UdpToXaiBridge:
                     continue
 
                 if command == "commit":
-                    await self.xai_client.send_commit()
+                    await self.flush_pending_audio()
+
+                    ok = await self.xai_client.send_commit()
+                    if not ok:
+                        self.logger.log(
+                            "Commit failed: websocket unavailable",
+                            "WARN",
+                        )
+
                 elif command == "cancel":
                     self.logger.log("CANCEL requested", "TURN")
+
                 continue
 
             if audio_task in done:
@@ -105,24 +128,21 @@ class UdpToXaiBridge:
                 if pcm_data is None:
                     break
 
-                await self.xai_client.send_audio_append(pcm_data)
-
-    async def udp_audio_sender(self) -> None:
-        while True:
-            pcm_data = await self.output_audio_queue.get()
-            if pcm_data is None:
-                break
-
-            await self.udp_message_sender.send_audio_chunked(
-                pcm_data,
-                self.udp_server.remote_addr,
-            )
+                ok = await self.xai_client.send_audio_append(pcm_data)
+                if not ok:
+                    self.logger.log(
+                        "Audio append skipped: websocket unavailable",
+                        "WARN",
+                    )
 
     async def run(self) -> None:
         """Start the bridge and keep all async tasks running together."""
-        try:
-            await self.xai_client.connect()
+        xai_task = None
+        websocket_sender_task = None
+        udp_audio_task = None
+        udp_server_task = None
 
+        try:
             self.logger.log(f"Output WAV file: {self.wav_out_file}")
             self.logger.log(f"Log file: {self.log_file}")
             self.logger.log(
@@ -136,20 +156,39 @@ class UdpToXaiBridge:
                 "CONFIG",
             )
 
+            xai_task = asyncio.create_task(self.xai_client.run_forever())
+            await self.xai_client.wait_until_connected()
+
+            websocket_sender_task = asyncio.create_task(self.websocket_sender())
+            udp_audio_task = asyncio.create_task(self.xai_client.udp_audio_sender())
+            udp_server_task = asyncio.create_task(self.udp_server.run())
+
             await asyncio.gather(
-                self.websocket_sender(),
-                self.xai_client.receive_events(),
-                self.xai_client.udp_audio_sender(),
-                self.udp_server.run(),
+                xai_task,
+                websocket_sender_task,
+                udp_audio_task,
+                udp_server_task,
             )
 
         except KeyboardInterrupt:
             self.logger.log("Stopped by user", "STOP")
+        except asyncio.CancelledError:
+            self.logger.log("Bridge tasks cancelled", "STOP")
+            raise
         except Exception as exc:
             self.logger.log(f"Unexpected error: {exc}", "ERROR")
         finally:
             self.running = False
             self.udp_server.running = False
+
+            for task in (
+                websocket_sender_task,
+                udp_audio_task,
+                udp_server_task,
+                xai_task,
+            ):
+                if task is not None:
+                    task.cancel()
 
             try:
                 await self.audio_queue.put(None)
@@ -158,6 +197,11 @@ class UdpToXaiBridge:
 
             try:
                 await self.commit_queue.put("cancel")
+            except Exception:
+                pass
+
+            try:
+                await self.xai_client.output_audio_queue.put(None)
             except Exception:
                 pass
 

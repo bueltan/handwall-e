@@ -9,9 +9,10 @@ from modules.bridget_logger import BridgeLogger
 class UdpMessageSender:
     """Send JSON messages and raw audio packets to the last known UDP peer."""
 
-    AUDIO_CHUNK_SIZE = 960
+    AUDIO_CHUNK_SIZE = 1200
     OUTPUT_SAMPLE_RATE = 16000
     BYTES_PER_SAMPLE = 2  # PCM16 mono
+    PACING_FACTOR = 0.90  # < 1.0 = un poco más rápido que realtime
 
     def __init__(self, logger: BridgeLogger) -> None:
         self.logger = logger
@@ -19,11 +20,12 @@ class UdpMessageSender:
 
     @property
     def audio_packet_seconds(self) -> float:
-        return (
+        base_seconds = (
             self.AUDIO_CHUNK_SIZE
             / self.BYTES_PER_SAMPLE
             / self.OUTPUT_SAMPLE_RATE
         )
+        return base_seconds * self.PACING_FACTOR
 
     def send_json(self, payload: dict, addr: Optional[Tuple[str, int]]) -> None:
         if not addr:
@@ -70,7 +72,12 @@ class UdpMessageSender:
                     await asyncio.sleep(delay)
 
             self.logger.log(
-                f"UDP audio paced send: {sent_chunks} chunks of {self.AUDIO_CHUNK_SIZE} bytes",
+                (
+                    f"UDP audio paced send: {sent_chunks} chunks of "
+                    f"{self.AUDIO_CHUNK_SIZE} bytes | "
+                    f"packet_ms={self.audio_packet_seconds * 1000:.2f} | "
+                    f"pacing_factor={self.PACING_FACTOR}"
+                ),
                 "UDP",
             )
 

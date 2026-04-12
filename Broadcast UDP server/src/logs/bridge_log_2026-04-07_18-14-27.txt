@@ -1,5 +1,0 @@
-[2026-04-07 18:14:29.309] [ERROR] Unexpected error: server rejected WebSocket connection: HTTP 403
-[2026-04-07 18:14:29.310] [SUMMARY] === END OF TRANSMISSION ===
-[2026-04-07 18:14:29.310] [SUMMARY] Output saved to: audio_out_2026-04-07_18-14-27.wav
-[2026-04-07 18:14:29.310] [SUMMARY] Total packets received: 0
-[2026-04-07 18:14:29.310] [SUMMARY] Total packets lost: 0 (0.00%)

@@ -20,7 +20,7 @@ class UdpConfig:
     samples_per_packet: int = 160
     metadata_size: int = 4
     jitter_ms: int = 250
-    max_buffer: int = 800
+    max_buffer: int = 1600
     max_missing_before_loss: int = 5
 
     @property
