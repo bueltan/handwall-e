@@ -1,0 +1,13 @@
+#pragma once
+
+#include <stdint.h>
+
+void drawMainUI();
+void drawStatus(const char* msg);
+void drawLog(const char* msg);
+void updateVolumeLevel(int16_t volume);
+void handleMainTouch(uint16_t x, uint16_t y);
+void drawIncomingUDP(const char *msg);
+void taskVolumeUI(void *pvParameters);
+
+

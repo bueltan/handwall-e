@@ -7,7 +7,7 @@ QueueHandle_t udpAudioQueue = NULL;
 QueueHandle_t udpControlQueue = NULL;
 
 // ====================== APP SCREEN ======================
-volatile AppScreen currentScreen = SCREEN_CONFIG;
+volatile AppScreen currentScreen = SCREEN_START;
 
 // ====================== NETWORK STATUS ======================
 volatile Status wifiStatus = DISCONNECTED;

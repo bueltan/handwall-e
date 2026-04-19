@@ -41,4 +41,3 @@ constexpr uint16_t KEY_TEXT_COLOR   = TFT_GREEN;
 constexpr uint16_t KEY_BORDER_COLOR = TFT_GREEN;
 
 
-

@@ -5,7 +5,7 @@ from pathlib import Path
 HOST = "0.0.0.0"
 PORT = 9999
 WAV_FILE = "wall-e.wav"
-CHUNK_FRAMES = 640
+CHUNK_FRAMES = 360
 
 
 class UDPAudioSender(asyncio.DatagramProtocol):

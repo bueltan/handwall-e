@@ -1,454 +1,1052 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WiFiUdp.h>
-#include <string.h>
 #include "driver/i2s.h"
+#include <opus.h>
 
-#define I2S_PORT I2S_NUM_0
+// ==============================
+// WiFi / UDP
+// ==============================
+static const char *WIFI_SSID = "MOVISTAR-WIFI6-B700";
+static const char *WIFI_PASS = "uDRsVe6jpvSfSCiQ9wPL";
 
-// ===== PCM5102A pins =====
-static const uint8_t PIN_I2S_BCK  = 4;
-static const uint8_t PIN_I2S_WS   = 5;
-static const uint8_t PIN_I2S_DOUT = 6;
+static const char *SERVER_IP = "74.208.158.226";
+static const uint16_t SERVER_PORT = 9999;
+static const uint16_t LOCAL_UDP_PORT = 12000;
 
-// ===== Network config =====
-const char* WIFI_SSID = "Galaxy M12 C9A6";
-const char* WIFI_PASS = "zhof1469";
-const char* SERVER_IP = "10.19.187.13";
-const uint16_t SERVER_PORT = 9999;
-const uint16_t LOCAL_PORT = 54321;
-
-// ===== Audio config =====
-static const uint32_t SAMPLE_RATE = 16000;
-static const size_t UDP_RX_BUFFER_SIZE = 1472;   // Safe UDP payload size on LAN
-static const size_t I2S_BLOCK_SAMPLES = 256;     // mono samples per write block
-static const size_t PREBUFFER_SAMPLES = 3200;    // 200 ms at 16 kHz
-static const size_t FIFO_SAMPLES = 16000 * 3;    // 3 seconds mono buffer
-
-// ===== Task stack / priority =====
-static const uint32_t TASK_STACK_WORDS = 4096;
-static const UBaseType_t UDP_TASK_PRIORITY = 2;
-static const UBaseType_t AUDIO_TASK_PRIORITY = 3;
-
-// ===== Globals =====
 WiFiUDP udp;
 
-static uint8_t udpRxBuffer[UDP_RX_BUFFER_SIZE];
-static int16_t stereoOutBuffer[I2S_BLOCK_SAMPLES * 2];
-static int16_t audioFifo[FIFO_SAMPLES];
+// ==============================
+// Audio / Opus config
+// ==============================
+static const uint32_t SAMPLE_RATE = 16000;
+static const uint8_t CHANNELS = 1;
+static const uint16_t FRAME_SAMPLES = 320; // 20 ms @ 16 kHz
+static const uint16_t MAX_DECODE_SAMPLES = FRAME_SAMPLES;
 
-static volatile size_t fifoWriteIndex = 0;
-static volatile size_t fifoReadIndex = 0;
-static volatile size_t fifoCount = 0;
+// ==============================
+// I2S pins
+// ==============================
+static const int I2S_BCK_PIN = 4;
+static const int I2S_WS_PIN = 5;
+static const int I2S_DATA_PIN = 7;
+static const i2s_port_t I2S_PORT = I2S_NUM_0;
 
-static portMUX_TYPE fifoMux = portMUX_INITIALIZER_UNLOCKED;
+// ==============================
+// Protocol
+// ==============================
+static const uint8_t MAGIC[4] = {'O', 'P', 'U', 'S'};
+static const uint8_t VERSION = 1;
+static const uint8_t FLAG_END = 0x01;
+static const size_t HEADER_SIZE = 18;
 
-static volatile bool streamRequested = false;
-static volatile bool streamFinished = false;
+// ==============================
+// Jitter / reorder buffer
+// ==============================
+static const int JITTER_SLOTS = 220;
+static const int START_BUFFERED_PACKETS = 50; // 1.0 s
+static const int REBUFFER_PACKETS = 40;       // 0.8 s
+static const int LOW_WATER_PACKETS = 12;
+static const int MAX_CONSECUTIVE_MISSES = 10;
+static const int MAX_OPUS_PAYLOAD = 400;
+
+static const uint32_t MAX_AHEAD_WINDOW = 220;
+static const uint32_t HARD_REBUFFER_GAP = 170;
+static const uint32_t HARD_REBUFFER_MISSES = 24;
+
+// ==============================
+// Timing
+// ==============================
+static const uint32_t START_RETRY_MS = 3000;
+static const uint32_t END_TIMEOUT_MS = 1800;
+static const uint32_t STATS_PERIOD_MS = 2000;
+static const uint32_t PLAYBACK_PERIOD_MS = 20;
+
+// ==============================
+// Packet slot
+// ==============================
+struct PacketSlot
+{
+    bool used;
+    uint32_t seq;
+    uint32_t pts_samples;
+    uint16_t frame_samples;
+    uint16_t payload_len;
+    uint8_t flags;
+    uint8_t payload[MAX_OPUS_PAYLOAD];
+};
+
+static PacketSlot jitter[JITTER_SLOTS];
+
+// ==============================
+// Shared state
+// ==============================
 static volatile bool playbackStarted = false;
-static volatile bool serverEndReceived = false;
+static volatile bool rebuffering = true;
+static volatile bool endSeen = false;
+static volatile bool streamFinished = false;
+static volatile bool resumeLogArmed = true;
 
-static volatile uint32_t droppedSamples = 0;
+static volatile uint32_t expectedSeq = 0;
+static volatile uint32_t highestSeqSeen = 0;
+static volatile uint32_t endSeq = 0;
+static volatile uint32_t consecutiveMisses = 0;
+static volatile uint32_t lastPacketMillis = 0;
+static volatile uint32_t startSentMillis = 0;
+
+// stats
 static volatile uint32_t receivedPackets = 0;
-static volatile uint32_t receivedSamples = 0;
+static volatile uint32_t droppedPackets = 0;
+static volatile uint32_t bufferFullDrops = 0;
+static volatile uint32_t duplicatePackets = 0;
+static volatile uint32_t latePackets = 0;
+static volatile uint32_t aheadDrops = 0;
+static volatile uint32_t missingPackets = 0;
+static volatile uint32_t decodedPackets = 0;
+static volatile uint32_t decodeErrors = 0;
+static volatile uint32_t malformedPackets = 0;
+static volatile uint32_t plcPackets = 0;
+static volatile uint32_t fecRecoveredPackets = 0;
+static volatile uint32_t plcFallbackPackets = 0;
+static volatile uint32_t hardRebuffers = 0;
 
-unsigned long lastPacketMs = 0;
-unsigned long lastStreamRequestMs = 0;
-unsigned long lastStatsMs = 0;
+// decoder and playback buffers
+static OpusDecoder *opusDecoder = nullptr;
+static int opusErr = 0;
 
-// =========================================================
-// I2S
-// =========================================================
-void setupI2S()
+static PacketSlot playbackPkt;
+static int16_t pcmOut[MAX_DECODE_SAMPLES];
+static int16_t silenceFrame[FRAME_SAMPLES] = {0};
+
+// RTOS
+static SemaphoreHandle_t jitterMutex = nullptr;
+static TaskHandle_t udpRxTaskHandle = nullptr;
+static TaskHandle_t playbackTaskHandle = nullptr;
+static TaskHandle_t controlTaskHandle = nullptr;
+static TaskHandle_t statsTaskHandle = nullptr;
+
+// ==============================
+// Helpers
+// ==============================
+static uint16_t read_be16(const uint8_t *p)
 {
-    i2s_config_t i2s_config = {};
-    i2s_config.mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX);
-    i2s_config.sample_rate = SAMPLE_RATE;
-    i2s_config.bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT;
-    i2s_config.channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT;
-    i2s_config.communication_format = I2S_COMM_FORMAT_STAND_I2S;
-    i2s_config.intr_alloc_flags = 0;
-    i2s_config.dma_buf_count = 8;
-    i2s_config.dma_buf_len = 256;
-    i2s_config.use_apll = false;
-    i2s_config.tx_desc_auto_clear = true;
-    i2s_config.fixed_mclk = 0;
-
-    i2s_pin_config_t pin_config = {};
-    pin_config.bck_io_num = PIN_I2S_BCK;
-    pin_config.ws_io_num = PIN_I2S_WS;
-    pin_config.data_out_num = PIN_I2S_DOUT;
-    pin_config.data_in_num = I2S_PIN_NO_CHANGE;
-
-    ESP_ERROR_CHECK(i2s_driver_install(I2S_PORT, &i2s_config, 0, NULL));
-    ESP_ERROR_CHECK(i2s_set_pin(I2S_PORT, &pin_config));
-    ESP_ERROR_CHECK(i2s_zero_dma_buffer(I2S_PORT));
+    return (uint16_t(p[0]) << 8) | uint16_t(p[1]);
 }
 
-// =========================================================
-// WiFi / UDP
-// =========================================================
-void connectWiFi()
+static uint32_t read_be32(const uint8_t *p)
 {
-    Serial.printf("Connecting to WiFi: %s\n", WIFI_SSID);
+    return (uint32_t(p[0]) << 24) |
+           (uint32_t(p[1]) << 16) |
+           (uint32_t(p[2]) << 8) |
+           uint32_t(p[3]);
+}
 
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(WIFI_SSID, WIFI_PASS);
-
-    while (WiFi.status() != WL_CONNECTED)
+static void clearJitterNoLock()
+{
+    for (int i = 0; i < JITTER_SLOTS; ++i)
     {
-        delay(500);
-        Serial.print(".");
+        jitter[i].used = false;
+        jitter[i].seq = 0;
+        jitter[i].pts_samples = 0;
+        jitter[i].frame_samples = 0;
+        jitter[i].payload_len = 0;
+        jitter[i].flags = 0;
     }
-
-    Serial.println();
-    Serial.println("WiFi connected");
-    Serial.print("ESP32 IP: ");
-    Serial.println(WiFi.localIP());
 }
 
-bool startUdp()
+static int countBufferedPacketsNoLock()
 {
-    if (udp.begin(LOCAL_PORT))
+    int count = 0;
+    for (int i = 0; i < JITTER_SLOTS; ++i)
     {
-        Serial.printf("UDP listening on local port %u\n", LOCAL_PORT);
-        return true;
+        if (jitter[i].used)
+        {
+            count++;
+        }
     }
-
-    Serial.println("Failed to start UDP");
-    return false;
-}
-
-void clearAudioFifo()
-{
-    portENTER_CRITICAL(&fifoMux);
-    fifoWriteIndex = 0;
-    fifoReadIndex = 0;
-    fifoCount = 0;
-    portEXIT_CRITICAL(&fifoMux);
-}
-
-void requestStream()
-{
-    Serial.printf("Requesting stream from %s:%u\n", SERVER_IP, SERVER_PORT);
-
-    udp.beginPacket(SERVER_IP, SERVER_PORT);
-    udp.print("START");
-    udp.endPacket();
-
-    clearAudioFifo();
-
-    streamRequested = true;
-    streamFinished = false;
-    playbackStarted = false;
-    serverEndReceived = false;
-    lastPacketMs = millis();
-    lastStreamRequestMs = millis();
-}
-
-// =========================================================
-// FIFO helpers
-// =========================================================
-size_t fifoAvailableSamples()
-{
-    size_t count;
-    portENTER_CRITICAL(&fifoMux);
-    count = fifoCount;
-    portEXIT_CRITICAL(&fifoMux);
     return count;
 }
 
-void fifoPushSample(int16_t sample)
+static int findSlotBySeqNoLock(uint32_t seq)
 {
-    portENTER_CRITICAL(&fifoMux);
-
-    if (fifoCount < FIFO_SAMPLES)
+    for (int i = 0; i < JITTER_SLOTS; ++i)
     {
-        audioFifo[fifoWriteIndex] = sample;
-        fifoWriteIndex = (fifoWriteIndex + 1) % FIFO_SAMPLES;
-        fifoCount++;
+        if (jitter[i].used && jitter[i].seq == seq)
+        {
+            return i;
+        }
     }
-    else
-    {
-        droppedSamples++;
-    }
-
-    portEXIT_CRITICAL(&fifoMux);
+    return -1;
 }
 
-bool fifoPopSample(int16_t& sample)
+static int findFreeSlotNoLock()
+{
+    for (int i = 0; i < JITTER_SLOTS; ++i)
+    {
+        if (!jitter[i].used)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+static bool getMinBufferedSeqNoLock(uint32_t &minSeq)
+{
+    bool found = false;
+    minSeq = 0xFFFFFFFFu;
+
+    for (int i = 0; i < JITTER_SLOTS; ++i)
+    {
+        if (jitter[i].used && jitter[i].seq < minSeq)
+        {
+            minSeq = jitter[i].seq;
+            found = true;
+        }
+    }
+
+    return found;
+}
+
+static bool getStateSnapshot(bool &started, bool &rebuf, bool &seenEnd, bool &finished,
+                             uint32_t &expSeq, uint32_t &hiSeq, uint32_t &eSeq,
+                             uint32_t &lastPktMs, uint32_t &consecMiss)
+{
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) != pdTRUE)
+    {
+        return false;
+    }
+
+    started = playbackStarted;
+    rebuf = rebuffering;
+    seenEnd = endSeen;
+    finished = streamFinished;
+    expSeq = expectedSeq;
+    hiSeq = highestSeqSeen;
+    eSeq = endSeq;
+    lastPktMs = lastPacketMillis;
+    consecMiss = consecutiveMisses;
+
+    xSemaphoreGive(jitterMutex);
+    return true;
+}
+
+static void resetDecoderState()
+{
+    if (opusDecoder)
+    {
+        opus_decoder_ctl(opusDecoder, OPUS_RESET_STATE);
+    }
+}
+
+static void resetStreamState()
+{
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+    {
+        clearJitterNoLock();
+
+        playbackStarted = false;
+        rebuffering = true;
+        endSeen = false;
+        streamFinished = false;
+        resumeLogArmed = true;
+
+        expectedSeq = 0;
+        highestSeqSeen = 0;
+        endSeq = 0;
+        consecutiveMisses = 0;
+        lastPacketMillis = 0;
+
+        receivedPackets = 0;
+        droppedPackets = 0;
+        bufferFullDrops = 0;
+        duplicatePackets = 0;
+        latePackets = 0;
+        aheadDrops = 0;
+        missingPackets = 0;
+        decodedPackets = 0;
+        decodeErrors = 0;
+        malformedPackets = 0;
+        plcPackets = 0;
+        fecRecoveredPackets = 0;
+        plcFallbackPackets = 0;
+        hardRebuffers = 0;
+
+        xSemaphoreGive(jitterMutex);
+    }
+
+    resetDecoderState();
+}
+
+static int getBufferedCountLocked()
+{
+    int buffered = 0;
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+    {
+        buffered = countBufferedPacketsNoLock();
+        xSemaphoreGive(jitterMutex);
+    }
+    return buffered;
+}
+
+static bool getMinBufferedSeqLocked(uint32_t &minSeq)
+{
+    bool found = false;
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+    {
+        found = getMinBufferedSeqNoLock(minSeq);
+        xSemaphoreGive(jitterMutex);
+    }
+    return found;
+}
+
+static bool popExpectedPacketLocked(PacketSlot &out)
 {
     bool ok = false;
 
-    portENTER_CRITICAL(&fifoMux);
-
-    if (fifoCount > 0)
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
     {
-        sample = audioFifo[fifoReadIndex];
-        fifoReadIndex = (fifoReadIndex + 1) % FIFO_SAMPLES;
-        fifoCount--;
-        ok = true;
+        int idx = findSlotBySeqNoLock(expectedSeq);
+        if (idx >= 0)
+        {
+            out = jitter[idx];
+            jitter[idx].used = false;
+            ok = true;
+        }
+        xSemaphoreGive(jitterMutex);
     }
 
-    portEXIT_CRITICAL(&fifoMux);
     return ok;
 }
 
-// =========================================================
-// UDP audio input
-// =========================================================
-void pushUdpPayloadToFifo(const uint8_t* data, size_t lenBytes)
+static bool peekPacketBySeqLocked(uint32_t seq, PacketSlot &out)
 {
-    if (lenBytes < 2)
+    bool ok = false;
+
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
     {
-        return;
-    }
-
-    size_t monoSamples = lenBytes / 2;
-
-    for (size_t i = 0; i < monoSamples; ++i)
-    {
-        const size_t byteIndex = i * 2;
-
-        // PCM16 little-endian
-        int16_t sample = (int16_t)(
-            ((uint16_t)data[byteIndex]) |
-            ((uint16_t)data[byteIndex + 1] << 8)
-        );
-
-        fifoPushSample(sample);
-    }
-
-    receivedSamples += monoSamples;
-}
-
-void handleUdpPacket()
-{
-    int packetSize = udp.parsePacket();
-    if (packetSize <= 0)
-    {
-        return;
-    }
-
-    if ((size_t)packetSize > sizeof(udpRxBuffer))
-    {
-        packetSize = sizeof(udpRxBuffer);
-    }
-
-    int len = udp.read(udpRxBuffer, packetSize);
-    if (len <= 0)
-    {
-        return;
-    }
-
-    lastPacketMs = millis();
-    receivedPackets++;
-
-    if (len == 7 && memcmp(udpRxBuffer, "__END__", 7) == 0)
-    {
-        Serial.println("Stream finished by server");
-        serverEndReceived = true;
-        return;
-    }
-
-    pushUdpPayloadToFifo(udpRxBuffer, (size_t)len);
-}
-
-// =========================================================
-// Audio output
-// =========================================================
-void writeStereoBlockToI2S(int16_t* stereoData, size_t monoSamples)
-{
-    size_t bytesWritten = 0;
-
-    i2s_write(
-        I2S_PORT,
-        stereoData,
-        monoSamples * 2 * sizeof(int16_t),
-        &bytesWritten,
-        portMAX_DELAY
-    );
-}
-
-void fillStereoSilence(int16_t* outBuffer, size_t monoSamples)
-{
-    memset(outBuffer, 0, monoSamples * 2 * sizeof(int16_t));
-}
-
-void fillStereoFromFifo(int16_t* outBuffer, size_t monoSamples, size_t& actualSamples)
-{
-    actualSamples = 0;
-
-    for (size_t i = 0; i < monoSamples; ++i)
-    {
-        int16_t sample = 0;
-        bool ok = fifoPopSample(sample);
-        if (!ok)
+        int idx = findSlotBySeqNoLock(seq);
+        if (idx >= 0)
         {
-            break;
+            out = jitter[idx];
+            ok = true;
+        }
+        xSemaphoreGive(jitterMutex);
+    }
+
+    return ok;
+}
+
+static bool shouldPrintResumeLogAndDisarm()
+{
+    bool shouldPrint = false;
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+    {
+        shouldPrint = resumeLogArmed;
+        resumeLogArmed = false;
+        xSemaphoreGive(jitterMutex);
+    }
+    return shouldPrint;
+}
+
+static void setExpectedSeqAndResume(uint32_t seq)
+{
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+    {
+        expectedSeq = seq;
+        playbackStarted = true;
+        rebuffering = false;
+        consecutiveMisses = 0;
+        xSemaphoreGive(jitterMutex);
+    }
+}
+
+static void setPlaybackState(bool started, bool rebuf, bool finished, uint32_t consecMiss)
+{
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+    {
+        playbackStarted = started;
+        rebuffering = rebuf;
+        streamFinished = finished;
+        consecutiveMisses = consecMiss;
+        if (rebuf)
+        {
+            resumeLogArmed = true;
+        }
+        xSemaphoreGive(jitterMutex);
+    }
+}
+
+static void advanceExpectedSeq()
+{
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+    {
+        expectedSeq++;
+        xSemaphoreGive(jitterMutex);
+    }
+}
+
+static void incrementMissingAndMaybeRebuffer(bool doRebuffer, bool hardRebuffer)
+{
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+    {
+        missingPackets++;
+        consecutiveMisses++;
+        if (doRebuffer)
+        {
+            rebuffering = true;
+            resumeLogArmed = true;
+        }
+        if (hardRebuffer)
+        {
+            hardRebuffers++;
+        }
+        xSemaphoreGive(jitterMutex);
+    }
+}
+
+static void resetConsecutiveMisses()
+{
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+    {
+        consecutiveMisses = 0;
+        xSemaphoreGive(jitterMutex);
+    }
+}
+
+static void incrementDecodeErrors()
+{
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+    {
+        decodeErrors++;
+        xSemaphoreGive(jitterMutex);
+    }
+}
+
+static void incrementDecodedPackets()
+{
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+    {
+        decodedPackets++;
+        xSemaphoreGive(jitterMutex);
+    }
+}
+
+static void incrementMalformedPackets()
+{
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+    {
+        malformedPackets++;
+        xSemaphoreGive(jitterMutex);
+    }
+}
+
+static void incrementPlcPackets()
+{
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+    {
+        plcPackets++;
+        xSemaphoreGive(jitterMutex);
+    }
+}
+
+static void incrementFecRecoveredPackets()
+{
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+    {
+        fecRecoveredPackets++;
+        xSemaphoreGive(jitterMutex);
+    }
+}
+
+static void incrementPlcFallbackPackets()
+{
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+    {
+        plcFallbackPackets++;
+        xSemaphoreGive(jitterMutex);
+    }
+}
+
+// true = inserted
+// false = dropped/ignored
+static bool insertPacketLocked(uint32_t seq,
+                               uint32_t pts_samples,
+                               uint16_t frame_samples,
+                               uint16_t payload_len,
+                               uint8_t flags,
+                               const uint8_t *payload)
+{
+    bool inserted = false;
+
+    if (payload_len > MAX_OPUS_PAYLOAD)
+    {
+        if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+        {
+            droppedPackets++;
+            malformedPackets++;
+            xSemaphoreGive(jitterMutex);
+        }
+        return false;
+    }
+
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+    {
+        if (findSlotBySeqNoLock(seq) >= 0)
+        {
+            duplicatePackets++;
+        }
+        else if (playbackStarted && !rebuffering && seq < expectedSeq)
+        {
+            latePackets++;
+        }
+        else if (playbackStarted && !rebuffering && seq > expectedSeq + MAX_AHEAD_WINDOW)
+        {
+            droppedPackets++;
+            aheadDrops++;
+        }
+        else
+        {
+            int idx = findFreeSlotNoLock();
+            if (idx < 0)
+            {
+                droppedPackets++;
+                bufferFullDrops++;
+                xSemaphoreGive(jitterMutex);
+                return false;
+            }
+
+            jitter[idx].used = true;
+            jitter[idx].seq = seq;
+            jitter[idx].pts_samples = pts_samples;
+            jitter[idx].frame_samples = frame_samples;
+            jitter[idx].payload_len = payload_len;
+            jitter[idx].flags = flags;
+            memcpy(jitter[idx].payload, payload, payload_len);
+
+            if (receivedPackets == 0 || seq > highestSeqSeen)
+            {
+                highestSeqSeen = seq;
+            }
+
+            receivedPackets++;
+            lastPacketMillis = millis();
+            inserted = true;
         }
 
-        outBuffer[i * 2 + 0] = sample;
-        outBuffer[i * 2 + 1] = sample;
-        actualSamples++;
+        xSemaphoreGive(jitterMutex);
     }
 
-    // If underrun, pad the rest with silence
-    for (size_t i = actualSamples; i < monoSamples; ++i)
+    return inserted;
+}
+
+static void markEndPacket(uint32_t seq)
+{
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
     {
-        outBuffer[i * 2 + 0] = 0;
-        outBuffer[i * 2 + 1] = 0;
+        endSeen = true;
+        endSeq = seq;
+        xSemaphoreGive(jitterMutex);
     }
 }
 
-// =========================================================
-// Tasks
-// =========================================================
-void udpTask(void* pvParameters)
+// ==============================
+// Init
+// ==============================
+static bool i2sInit()
 {
-    (void)pvParameters;
+    i2s_config_t config = {};
+    config.mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX);
+    config.sample_rate = SAMPLE_RATE;
+    config.bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT;
+    config.channel_format = I2S_CHANNEL_FMT_ONLY_LEFT;
+    config.communication_format = I2S_COMM_FORMAT_STAND_I2S;
+    config.intr_alloc_flags = 0;
+    config.dma_buf_count = 8;
+    config.dma_buf_len = 256;
+    config.use_apll = false;
+    config.tx_desc_auto_clear = true;
+    config.fixed_mclk = 0;
 
-    for (;;)
+    i2s_pin_config_t pins = {};
+    pins.bck_io_num = I2S_BCK_PIN;
+    pins.ws_io_num = I2S_WS_PIN;
+    pins.data_out_num = I2S_DATA_PIN;
+    pins.data_in_num = I2S_PIN_NO_CHANGE;
+
+    esp_err_t err = i2s_driver_install(I2S_PORT, &config, 0, nullptr);
+    if (err != ESP_OK)
     {
-        if (WiFi.status() != WL_CONNECTED)
+        Serial.printf("[I2S] driver_install failed: %d\n", err);
+        return false;
+    }
+
+    err = i2s_set_pin(I2S_PORT, &pins);
+    if (err != ESP_OK)
+    {
+        Serial.printf("[I2S] set_pin failed: %d\n", err);
+        return false;
+    }
+
+    err = i2s_zero_dma_buffer(I2S_PORT);
+    if (err != ESP_OK)
+    {
+        Serial.printf("[I2S] zero_dma_buffer failed: %d\n", err);
+        return false;
+    }
+
+    return true;
+}
+
+static bool opusInit()
+{
+    opusDecoder = opus_decoder_create(SAMPLE_RATE, CHANNELS, &opusErr);
+    if (!opusDecoder || opusErr != OPUS_OK)
+    {
+        Serial.printf("[OPUS] decoder create failed: %d\n", opusErr);
+        return false;
+    }
+
+    resetDecoderState();
+    return true;
+}
+
+// ==============================
+// UDP
+// ==============================
+static void sendStart()
+{
+    resetStreamState();
+
+    if (xSemaphoreTake(jitterMutex, portMAX_DELAY) == pdTRUE)
+    {
+        startSentMillis = millis();
+        xSemaphoreGive(jitterMutex);
+    }
+
+    udp.beginPacket(SERVER_IP, SERVER_PORT);
+    udp.write((const uint8_t *)"START", 5);
+    udp.endPacket();
+
+    Serial.println("[UDP] START sent");
+}
+
+static bool parseAndQueuePacket(const uint8_t *buf, size_t len)
+{
+    if (len < HEADER_SIZE)
+    {
+        return false;
+    }
+
+    if (memcmp(buf, MAGIC, 4) != 0)
+    {
+        return false;
+    }
+
+    uint8_t version = buf[4];
+    uint8_t flags = buf[5];
+    uint32_t seq = read_be32(buf + 6);
+    uint32_t pts_samples = read_be32(buf + 10);
+    uint16_t frame_samples = read_be16(buf + 14);
+    uint16_t payload_len = read_be16(buf + 16);
+
+    if (version != VERSION)
+    {
+        return false;
+    }
+
+    if ((HEADER_SIZE + payload_len) != len)
+    {
+        return false;
+    }
+
+    if ((flags & FLAG_END) != 0)
+    {
+        markEndPacket(seq);
+        Serial.printf("[UDP] END packet seq=%lu\n", (unsigned long)seq);
+        return true;
+    }
+
+    if (frame_samples != FRAME_SAMPLES)
+    {
+        return false;
+    }
+
+    return insertPacketLocked(seq, pts_samples, frame_samples, payload_len, flags, buf + HEADER_SIZE);
+}
+
+// ==============================
+// Audio output
+// ==============================
+static void writePcmToI2S(const int16_t *pcm, size_t samples)
+{
+    size_t bytesWritten = 0;
+    i2s_write(I2S_PORT, pcm, samples * sizeof(int16_t), &bytesWritten, portMAX_DELAY);
+}
+
+static void writeSilenceFrame()
+{
+    writePcmToI2S(silenceFrame, FRAME_SAMPLES);
+}
+
+static void decodeAndWriteLossRecovery()
+{
+    PacketSlot nextPkt;
+
+    // Try FEC using the next packet if available.
+    if (peekPacketBySeqLocked(expectedSeq + 1, nextPkt))
+    {
+        int fecSamples = opus_decode(
+            opusDecoder,
+            nextPkt.payload,
+            nextPkt.payload_len,
+            pcmOut,
+            FRAME_SAMPLES,
+            1 // decode_fec
+        );
+
+        if (fecSamples > 0)
         {
-            vTaskDelay(pdMS_TO_TICKS(500));
+            writePcmToI2S(pcmOut, fecSamples);
+            incrementFecRecoveredPackets();
+            return;
+        }
+    }
+
+    // Fallback to normal PLC
+    int plcSamples = opus_decode(
+        opusDecoder,
+        nullptr,
+        0,
+        pcmOut,
+        FRAME_SAMPLES,
+        0
+    );
+
+    if (plcSamples > 0)
+    {
+        writePcmToI2S(pcmOut, plcSamples);
+        incrementPlcPackets();
+        incrementPlcFallbackPackets();
+    }
+    else
+    {
+        writeSilenceFrame();
+        incrementDecodeErrors();
+    }
+}
+
+// ==============================
+// Tasks
+// ==============================
+static void udpRxTask(void *parameter)
+{
+    static uint8_t rxBuf[HEADER_SIZE + MAX_OPUS_PAYLOAD + 16];
+
+    while (true)
+    {
+        int packetSize = udp.parsePacket();
+        if (packetSize > 0)
+        {
+            int n = udp.read(rxBuf, sizeof(rxBuf));
+            if (n > 0)
+            {
+                bool ok = parseAndQueuePacket(rxBuf, (size_t)n);
+                if (!ok)
+                {
+                    incrementMalformedPackets();
+                }
+            }
+        }
+        else
+        {
+            vTaskDelay(pdMS_TO_TICKS(1));
+        }
+    }
+}
+
+static void playbackTask(void *parameter)
+{
+    TickType_t lastWake = xTaskGetTickCount();
+
+    while (true)
+    {
+        vTaskDelayUntil(&lastWake, pdMS_TO_TICKS(PLAYBACK_PERIOD_MS));
+
+        bool started, rebuf, seenEnd, finished;
+        uint32_t expSeq, hiSeq, eSeq, lastPktMs, consecMiss;
+        getStateSnapshot(started, rebuf, seenEnd, finished, expSeq, hiSeq, eSeq, lastPktMs, consecMiss);
+
+        int buffered = getBufferedCountLocked();
+        uint32_t minSeq = 0;
+        bool foundMin = (buffered > 0) ? getMinBufferedSeqLocked(minSeq) : false;
+        uint32_t nowMs = millis();
+
+        if (finished)
+        {
+            vTaskDelay(pdMS_TO_TICKS(50));
             continue;
         }
 
-        handleUdpPacket();
-
-        // If no packet arrives for a while, ask again
-        if (streamRequested && !serverEndReceived)
+        if (seenEnd && buffered == 0 && expSeq >= eSeq)
         {
-            const unsigned long now = millis();
-            if (now - lastPacketMs > 3000 && now - lastStreamRequestMs > 1000)
-            {
-                Serial.println("UDP timeout, re-requesting stream...");
-                requestStream();
-            }
+            setPlaybackState(false, true, true, 0);
+            Serial.println("[PLAYBACK] stream finished by END");
+            continue;
         }
 
-        // If server ended and buffer drained, request again after 2 seconds
-        if (serverEndReceived && fifoAvailableSamples() == 0)
+        if (!seenEnd && started && buffered == 0)
         {
-            if (!streamFinished)
+            if ((nowMs - lastPktMs) > END_TIMEOUT_MS)
             {
-                streamFinished = true;
-                Serial.println("Playback buffer drained");
-            }
-
-            const unsigned long now = millis();
-            if (now - lastStreamRequestMs > 2000)
-            {
-                requestStream();
-            }
-        }
-
-        vTaskDelay(pdMS_TO_TICKS(2));
-    }
-}
-
-void audioTask(void* pvParameters)
-{
-    (void)pvParameters;
-
-    for (;;)
-    {
-        size_t available = fifoAvailableSamples();
-
-        if (!playbackStarted)
-        {
-            if (available >= PREBUFFER_SAMPLES)
-            {
-                playbackStarted = true;
-                Serial.printf("Playback started with prebuffer: %u samples\n", (unsigned)available);
-            }
-            else
-            {
-                fillStereoSilence(stereoOutBuffer, I2S_BLOCK_SAMPLES);
-                writeStereoBlockToI2S(stereoOutBuffer, I2S_BLOCK_SAMPLES);
+                setPlaybackState(false, true, true, 0);
+                Serial.println("[PLAYBACK] stream finished by timeout");
                 continue;
             }
         }
 
-        size_t actualSamples = 0;
-        fillStereoFromFifo(stereoOutBuffer, I2S_BLOCK_SAMPLES, actualSamples);
-        writeStereoBlockToI2S(stereoOutBuffer, I2S_BLOCK_SAMPLES);
-
-        // If FIFO emptied after playback started, stop and wait for prebuffer again
-        if (actualSamples == 0)
+        if (rebuf || !started)
         {
-            playbackStarted = false;
+            bool canResume = false;
+            int needed = started ? REBUFFER_PACKETS : START_BUFFERED_PACKETS;
+
+            if (seenEnd)
+            {
+                canResume = (buffered > 0 && foundMin);
+            }
+            else
+            {
+                canResume = (buffered >= needed && foundMin);
+            }
+
+            if (canResume)
+            {
+                setExpectedSeqAndResume(minSeq);
+                if (shouldPrintResumeLogAndDisarm())
+                {
+                    Serial.printf("[PLAYBACK] start/resume at seq=%lu buffered=%d\n",
+                                  (unsigned long)minSeq, buffered);
+                }
+            }
+            else
+            {
+                continue;
+            }
         }
+
+        if (!popExpectedPacketLocked(playbackPkt))
+        {
+            bool bufferIsActuallyLow = (buffered <= LOW_WATER_PACKETS);
+            bool tooManyMissesWithLowBuffer = ((consecMiss + 1) >= MAX_CONSECUTIVE_MISSES) &&
+                                              (buffered <= (REBUFFER_PACKETS / 2));
+            bool seqGapTooLarge = (hiSeq > expSeq) && ((hiSeq - expSeq) > HARD_REBUFFER_GAP);
+            bool shouldHardRebuffer = seqGapTooLarge && ((consecMiss + 1) >= HARD_REBUFFER_MISSES);
+
+            bool doRebuffer = (!seenEnd && (
+                bufferIsActuallyLow ||
+                tooManyMissesWithLowBuffer ||
+                shouldHardRebuffer
+            ));
+
+            incrementMissingAndMaybeRebuffer(doRebuffer, shouldHardRebuffer);
+
+            if (doRebuffer)
+            {
+                continue;
+            }
+
+            decodeAndWriteLossRecovery();
+            advanceExpectedSeq();
+            continue;
+        }
+
+        resetConsecutiveMisses();
+
+        int decodedSamples = opus_decode(
+            opusDecoder,
+            playbackPkt.payload,
+            playbackPkt.payload_len,
+            pcmOut,
+            FRAME_SAMPLES,
+            0
+        );
+
+        if (decodedSamples < 0)
+        {
+            incrementDecodeErrors();
+            decodeAndWriteLossRecovery();
+            advanceExpectedSeq();
+            continue;
+        }
+
+        writePcmToI2S(pcmOut, decodedSamples);
+        incrementDecodedPackets();
+        advanceExpectedSeq();
     }
 }
 
-// =========================================================
-// Setup / loop
-// =========================================================
+static void controlTask(void *parameter)
+{
+    while (true)
+    {
+        bool started, rebuf, seenEnd, finished;
+        uint32_t expSeq, hiSeq, eSeq, lastPktMs, consecMiss;
+        getStateSnapshot(started, rebuf, seenEnd, finished, expSeq, hiSeq, eSeq, lastPktMs, consecMiss);
+
+        uint32_t now = millis();
+        bool noActivityYet = (!started && !finished && !seenEnd && (receivedPackets == 0));
+
+        if (noActivityYet)
+        {
+            uint32_t elapsed = now - startSentMillis;
+            if (elapsed >= START_RETRY_MS)
+            {
+                Serial.println("[CTRL] retry START");
+                sendStart();
+            }
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
+}
+
+static void statsTask(void *parameter)
+{
+    while (true)
+    {
+        int buffered = getBufferedCountLocked();
+
+        bool started, rebuf, seenEnd, finished;
+        uint32_t expSeq, hiSeq, eSeq, lastPktMs, consecMiss;
+        getStateSnapshot(started, rebuf, seenEnd, finished, expSeq, hiSeq, eSeq, lastPktMs, consecMiss);
+
+        Serial.printf(
+            "[STATS] rx=%lu dec=%lu fec=%lu plc=%lu plcFb=%lu miss=%lu drop=%lu fullDrop=%lu aheadDrop=%lu dup=%lu late=%lu malformed=%lu decErr=%lu hardRebuf=%lu buffered=%d expected=%lu highest=%lu end=%d rebuf=%d finished=%d\n",
+            (unsigned long)receivedPackets,
+            (unsigned long)decodedPackets,
+            (unsigned long)fecRecoveredPackets,
+            (unsigned long)plcPackets,
+            (unsigned long)plcFallbackPackets,
+            (unsigned long)missingPackets,
+            (unsigned long)droppedPackets,
+            (unsigned long)bufferFullDrops,
+            (unsigned long)aheadDrops,
+            (unsigned long)duplicatePackets,
+            (unsigned long)latePackets,
+            (unsigned long)malformedPackets,
+            (unsigned long)decodeErrors,
+            (unsigned long)hardRebuffers,
+            buffered,
+            (unsigned long)expSeq,
+            (unsigned long)hiSeq,
+            seenEnd ? 1 : 0,
+            rebuf ? 1 : 0,
+            finished ? 1 : 0);
+
+        vTaskDelay(pdMS_TO_TICKS(STATS_PERIOD_MS));
+    }
+}
+
+// ==============================
+// Arduino
+// ==============================
 void setup()
 {
     Serial.begin(115200);
-    delay(500);
+    delay(1000);
 
-    Serial.println("Init I2S...");
-    setupI2S();
-
-    connectWiFi();
-    delay(200);
-
-    if (!startUdp())
+    jitterMutex = xSemaphoreCreateMutex();
+    if (jitterMutex == nullptr)
     {
-        Serial.println("Cannot continue without UDP");
+        Serial.println("[RTOS] failed to create jitter mutex");
         while (true)
         {
             delay(1000);
         }
     }
 
-    delay(100);
-    requestStream();
+    resetStreamState();
 
-    xTaskCreatePinnedToCore(
-        udpTask,
-        "udpTask",
-        TASK_STACK_WORDS,
-        NULL,
-        UDP_TASK_PRIORITY,
-        NULL,
-        0
-    );
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(WIFI_SSID, WIFI_PASS);
 
-    xTaskCreatePinnedToCore(
-        audioTask,
-        "audioTask",
-        TASK_STACK_WORDS,
-        NULL,
-        AUDIO_TASK_PRIORITY,
-        NULL,
-        1
-    );
+    Serial.print("[WIFI] connecting");
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        Serial.print(".");
+        delay(500);
+    }
 
-    Serial.println("Ready to receive PCM16 mono 16kHz UDP audio");
+    WiFi.setSleep(false);
+    Serial.println();
+    Serial.print("[WIFI] IP: ");
+    Serial.println(WiFi.localIP());
+
+    if (!udp.begin(LOCAL_UDP_PORT))
+    {
+        Serial.println("[UDP] begin failed");
+        while (true)
+        {
+            delay(1000);
+        }
+    }
+
+    if (!i2sInit())
+    {
+        while (true)
+        {
+            delay(1000);
+        }
+    }
+
+    if (!opusInit())
+    {
+        while (true)
+        {
+            delay(1000);
+        }
+    }
+
+    if (xTaskCreate(udpRxTask, "udpRxTask", 4096, nullptr, 3, &udpRxTaskHandle) != pdPASS)
+    {
+        Serial.println("[RTOS] failed to create udpRxTask");
+        while (true)
+        {
+            delay(1000);
+        }
+    }
+
+    if (xTaskCreate(playbackTask, "playbackTask", 12288, nullptr, 2, &playbackTaskHandle) != pdPASS)
+    {
+        Serial.println("[RTOS] failed to create playbackTask");
+        while (true)
+        {
+            delay(1000);
+        }
+    }
+
+    if (xTaskCreate(controlTask, "controlTask", 4096, nullptr, 2, &controlTaskHandle) != pdPASS)
+    {
+        Serial.println("[RTOS] failed to create controlTask");
+        while (true)
+        {
+            delay(1000);
+        }
+    }
+
+    if (xTaskCreate(statsTask, "statsTask", 4096, nullptr, 1, &statsTaskHandle) != pdPASS)
+    {
+        Serial.println("[RTOS] failed to create statsTask");
+        while (true)
+        {
+            delay(1000);
+        }
+    }
+
+    sendStart();
 }
 
 void loop()
 {
-    const unsigned long now = millis();
-
-    if (now - lastStatsMs > 2000)
-    {
-        lastStatsMs = now;
-        Serial.printf(
-            "[STATS] fifo=%u samples | packets=%u | samples=%u | dropped=%u | playback=%s\n",
-            (unsigned)fifoAvailableSamples(),
-            (unsigned)receivedPackets,
-            (unsigned)receivedSamples,
-            (unsigned)droppedSamples,
-            playbackStarted ? "ON" : "WAIT"
-        );
-    }
-
-    delay(50);
+    vTaskDelay(portMAX_DELAY);
 }

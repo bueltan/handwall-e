@@ -13,8 +13,9 @@ extern QueueHandle_t udpControlQueue;
 
 // ====================== APP SCREEN ======================
 enum AppScreen {
-  SCREEN_CONFIG,
-  SCREEN_MAIN
+  SCREEN_START,
+  SCREEN_SETUP,
+  SCREEN_DEV
 };
 
 // ====================== NETWORK STATUS ======================
@@ -69,3 +70,5 @@ extern uint16_t t_y;
 
 // ====================== AUDIO ======================
 extern uint32_t sequence;
+
+

@@ -8,3 +8,4 @@ bool enqueueUDPControl(const String &msg);
 void clearUDPAudioQueue();
 void clearUDPControlQueue();
 void taskUDP(void *pvParameters);
+void udpRxTask(void *pvParameters);

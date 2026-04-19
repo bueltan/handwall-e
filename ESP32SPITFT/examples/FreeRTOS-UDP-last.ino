@@ -32,7 +32,7 @@ const char* ssid = "MOVISTAR-WIFI6-B700";
 const char* password = "uDRsVe6jpvSfSCiQ9wPL";
 
 // Configuración UDP
-const char* udpAddress = "192.168.1.37";
+const char* udpAddress = "192.168.1.42";
 const int udpPort = 5000;
 
 // Variables para ping/pong
@@ -160,163 +160,236 @@ void taskTouch(void *pvParameters) {
 // Tarea de UDP
 void taskUDP(void *pvParameters)
 {
+    (void)pvParameters;
+
     UdpPacket_t pkt;
     bool commitPendingAfterDrain = false;
+    uint32_t lastPingMs = 0;
 
-    while (true)
+    for (;;)
     {
-        if (wifiStatus == WIFI_CONNECTED)
-        {
-            if (cancelRequested)
-            {
-                cancelRequested = false;
-                commitRequested = false;
-                commitPendingAfterDrain = false;
-
-                resetPlaybackBuffer();
-                clearUDPAudioQueue();
-
-                if (enqueueUDPControl("CANCEL"))
-                {
-                    if (currentScreen == SCREEN_MAIN)
-                        postStatus("Queued CANCEL");
-                }
-                else
-                {
-                    if (currentScreen == SCREEN_MAIN)
-                        postStatus("Queue CANCEL failed");
-                }
-            }
-
-            if (commitRequested)
-            {
-                commitRequested = false;
-                commitPendingAfterDrain = true;
-
-                if (currentScreen == SCREEN_MAIN)
-                    postStatus("Commit pending drain");
-            }
-
-            if (!udpSocketStarted)
-            {
-                logHeap("before udp.begin");
-                if (udp.begin(UDP_PORT))
-                {
-                    logHeap("after udp.begin ok");
-                    udpSocketStarted = true;
-                    lastPongTime = millis();
-
-                    if (currentScreen == SCREEN_MAIN)
-                        postLog("UDP socket ready");
-                }
-                else
-                {
-                    logHeap("after udp.begin failed");
-                    if (currentScreen == SCREEN_MAIN)
-                        postLog("udp.begin failed");
-
-                    vTaskDelay(500 / portTICK_PERIOD_MS);
-                    continue;
-                }
-            }
-
-            // 1) Siempre drenar primero audio pendiente
-            bool sentAudioThisLoop = false;
-            while (xQueueReceive(udpAudioQueue, &pkt, 0) == pdPASS)
-            {
-                sendPacket(pkt);
-                sentAudioThisLoop = true;
-
-                if (pkt.data != NULL)
-                {
-                    logHeap("before free audio");
-                    free(pkt.data);
-                    pkt.data = NULL;
-                    logHeap("after free audio");
-                }
-            }
-
-            // 2) Si hay commit pendiente, solo enviarlo cuando ya no queda audio
-            if (commitPendingAfterDrain && uxQueueMessagesWaiting(udpAudioQueue) == 0)
-            {
-                logHeap("before COMMIT");
-
-                if (enqueueUDPControl("COMMIT"))
-                {
-                    logHeap("after COMMIT enqueue");
-                    if (currentScreen == SCREEN_MAIN)
-                        postStatus("Queued COMMIT");
-                }
-                else
-                {
-                    logHeap("after COMMIT enqueue");
-                    if (currentScreen == SCREEN_MAIN)
-                        postStatus("Queue COMMIT failed");
-                }
-
-                commitPendingAfterDrain = false;
-            }
-
-            // 3) Ahora sí mandar control
-            while (xQueueReceive(udpControlQueue, &pkt, 0) == pdPASS)
-            {
-                sendPacket(pkt);
-
-                if (pkt.data != NULL)
-                {
-                    free(pkt.data);
-                    pkt.data = NULL;
-                }
-            }
-
-            if (currentScreen == SCREEN_MAIN && millis() - lastPingTime > PING_INTERVAL)
-            {
-                lastPingTime = millis();
-
-                const char *pingMsg = "PING";
-                udp.beginPacket(serverIP.c_str(), UDP_PORT);
-                udp.write((const uint8_t *)pingMsg, strlen(pingMsg));
-                udp.endPacket();
-            }
-
-            int packetSize = udp.parsePacket();
-            if (packetSize > 0)
-            {
-                uint8_t rxBuffer[1472];
-                int readLen = packetSize;
-
-                if (readLen > (int)sizeof(rxBuffer))
-                    readLen = sizeof(rxBuffer);
-
-                int len = udp.read(rxBuffer, readLen);
-                if (len > 0)
-                {
-                    handleIncomingUdpRawPacket(rxBuffer, len);
-                }
-            }
-
-            if (currentScreen == SCREEN_MAIN && millis() - lastPongTime > PONG_TIMEOUT)
-            {
-                udpStatus = DISCONNECTED;
-            }
-        }
-        else
+        if (wifiStatus != WIFI_CONNECTED)
         {
             udpStatus = DISCONNECTED;
             udpSocketStarted = false;
             commitRequested = false;
+            cancelRequested = false;
+            commitPendingAfterDrain = false;
 
             if (!queuesClearedWhileDisconnected)
             {
                 clearUDPAudioQueue();
                 clearUDPControlQueue();
+                resetPlaybackBuffer();
+                resetOutputPacketJitter();
                 queuesClearedWhileDisconnected = true;
+            }
+
+            vTaskDelay(pdMS_TO_TICKS(50));
+            continue;
+        }
+
+        queuesClearedWhileDisconnected = false;
+
+        if (!udpSocketStarted)
+        {
+            logHeap("before udp.begin");
+
+            if (udp.begin(UDP_PORT))
+            {
+                logHeap("after udp.begin ok");
+                udpSocketStarted = true;
+                lastPongTime = millis();
+                lastPingMs = millis();
+
+                if (currentScreen == SCREEN_DEV)
+                    postLog("UDP socket ready");
+            }
+            else
+            {
+                logHeap("after udp.begin failed");
+
+                if (currentScreen == SCREEN_DEV)
+                    postLog("udp.begin failed");
+
+                vTaskDelay(pdMS_TO_TICKS(500));
+                continue;
             }
         }
 
-        vTaskDelay(2 / portTICK_PERIOD_MS);
+        // =========================================================
+        // 1) CANCEL tiene prioridad máxima
+        // =========================================================
+        if (cancelRequested)
+        {
+            cancelRequested = false;
+            commitRequested = false;
+            commitPendingAfterDrain = false;
+
+            resetPlaybackBuffer();
+            resetOutputPacketJitter();
+            clearUDPAudioQueue();
+
+            if (enqueueUDPControl("CANCEL"))
+            {
+                if (currentScreen == SCREEN_DEV)
+                    postStatus("Queued CANCEL");
+            }
+            else
+            {
+                if (currentScreen == SCREEN_DEV)
+                    postStatus("Queue CANCEL failed");
+            }
+        }
+
+        // =========================================================
+        // 2) Marcar COMMIT pendiente
+        // =========================================================
+        if (commitRequested)
+        {
+            commitRequested = false;
+            commitPendingAfterDrain = true;
+
+            if (currentScreen == SCREEN_DEV)
+                postStatus("Commit pending drain");
+        }
+
+        // =========================================================
+        // 3) Primero drenar TODOS los paquetes entrantes
+        //    Esto es clave para no perder la respuesta Opus
+        // =========================================================
+        for (;;)
+        {
+            int packetSize = udp.parsePacket();
+            if (packetSize <= 0)
+                break;
+
+            uint8_t rxBuffer[1472];
+            int readLen = packetSize;
+
+            if (readLen > (int)sizeof(rxBuffer))
+                readLen = (int)sizeof(rxBuffer);
+
+            int len = udp.read(rxBuffer, readLen);
+            if (len > 0)
+            {
+                handleIncomingUdpRawPacket(rxBuffer, len);
+            }
+        }
+
+        // =========================================================
+        // 4) Si hay COMMIT pendiente, esperar a que se vacíe audio TX
+        //    y resetear playback antes de mandar el commit
+        // =========================================================
+        if (commitPendingAfterDrain && uxQueueMessagesWaiting(udpAudioQueue) == 0)
+        {
+            resetPlaybackBuffer();
+            resetOutputPacketJitter();
+
+            logHeap("before COMMIT");
+
+            if (enqueueUDPControl("COMMIT"))
+            {
+                logHeap("after COMMIT enqueue");
+
+                if (currentScreen == SCREEN_DEV)
+                    postStatus("Queued COMMIT");
+            }
+            else
+            {
+                logHeap("after COMMIT enqueue");
+
+                if (currentScreen == SCREEN_DEV)
+                    postStatus("Queue COMMIT failed");
+            }
+
+            commitPendingAfterDrain = false;
+        }
+
+        // =========================================================
+        // 5) Enviar pocos paquetes de audio por iteración
+        //    para no ahogar la recepción
+        // =========================================================
+        int audioPacketsSent = 0;
+        const int maxAudioPacketsPerLoop = commitPendingAfterDrain ? 0 : 1;
+
+        while (audioPacketsSent < maxAudioPacketsPerLoop &&
+               xQueueReceive(udpAudioQueue, &pkt, 0) == pdPASS)
+        {
+            sendPacket(pkt);
+            audioPacketsSent++;
+
+            if (pkt.data != NULL)
+            {
+                logHeap("before free audio");
+                free(pkt.data);
+                pkt.data = NULL;
+                logHeap("after free audio");
+            }
+        }
+
+        // =========================================================
+        // 6) Mandar controles
+        // =========================================================
+        while (xQueueReceive(udpControlQueue, &pkt, 0) == pdPASS)
+        {
+            sendPacket(pkt);
+
+            if (pkt.data != NULL)
+            {
+                free(pkt.data);
+                pkt.data = NULL;
+            }
+        }
+
+        // =========================================================
+        // 7) Ping periódico
+        // =========================================================
+        if (millis() - lastPingMs >= PING_INTERVAL)
+        {
+            lastPingMs = millis();
+
+            const char *pingMsg = "PING";
+            udp.beginPacket(serverIP.c_str(), UDP_PORT);
+            udp.write((const uint8_t *)pingMsg, strlen(pingMsg));
+            udp.endPacket();
+        }
+
+        // =========================================================
+        // 8) Drenar RX otra vez, por si entró audio mientras enviábamos
+        // =========================================================
+        for (;;)
+        {
+            int packetSize = udp.parsePacket();
+            if (packetSize <= 0)
+                break;
+
+            uint8_t rxBuffer[1472];
+            int readLen = packetSize;
+
+            if (readLen > (int)sizeof(rxBuffer))
+                readLen = (int)sizeof(rxBuffer);
+
+            int len = udp.read(rxBuffer, readLen);
+            if (len > 0)
+            {
+                handleIncomingUdpRawPacket(rxBuffer, len);
+            }
+        }
+
+        // =========================================================
+        // 9) Timeout de conexión
+        // =========================================================
+        if (millis() - lastPongTime > PONG_TIMEOUT)
+        {
+            udpStatus = DISCONNECTED;
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(2));
     }
-}// ---------------------- SETUP ----------------------
+}
+
+// ---------------------- SETUP ----------------------
 void setup() {
   Serial.begin(115200);
   ts.begin();

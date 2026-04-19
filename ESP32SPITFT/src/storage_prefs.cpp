@@ -21,17 +21,22 @@ String getStageTitle(int stage) {
   return "Server IP:";
 }
 
+// const char* ssid = "MOVISTAR-WIFI6-B700";
+// const char* password = "uDRsVe6jpvSfSCiQ9wPL";
+
+// // Configuración UDP
+// const char* udpAddress = "192.168.1.42";
 void loadSavedConfig() {
   if (prefs.getString("wifi_ssid", "") == "") {
-    prefs.putString("wifi_ssid", "Galaxy M12 C9A6");
+    prefs.putString("wifi_ssid", "MOVISTAR-WIFI6-B700");
   }
 
   if (prefs.getString("wifi_pass", "") == "") {
-    prefs.putString("wifi_pass", "zhof1469");
+    prefs.putString("wifi_pass", "uDRsVe6jpvSfSCiQ9wPL");
   }
 
   if (prefs.getString("server_ip", "") == "") {
-    prefs.putString("server_ip", "10.19.187.13");
+    prefs.putString("server_ip", "192.168.1.42");
   }
 
   wifiSSID = prefs.getString("wifi_ssid", "");

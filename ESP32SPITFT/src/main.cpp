@@ -2,6 +2,7 @@
 #include <SPI.h>
 #include <driver/i2s.h>
 #include <ctype.h>
+#include <esp_system.h>
 
 #include "pins.h"
 #include "config.h"
@@ -9,11 +10,12 @@
 #include "ui_config.h"
 #include "storage_prefs.h"
 #include "display_hal.h"
-#include "ui_main.h"
 #include "network_udp.h"
-#include "ui_menu.h"
-#include <esp_system.h>
+#include "ui_dev.h"
+#include "ui_setup.h"
+#include "ui_start.h"
 #include "audio_playback.h"
+
 // ====================== GLOBAL BUFFERS ======================
 uint8_t packet[sizeof(AudioHeader) + PACKET_SIZE];
 int32_t i2sBuffer[BUFFER_LEN];
@@ -38,7 +40,13 @@ void drawConfigScreen()
     screenUnlock();
 }
 
-// ====================== I2S ======================
+void printResetReason()
+{
+    esp_reset_reason_t reason = esp_reset_reason();
+    Serial.printf("Reset reason: %d\n", (int)reason);
+}
+
+// ====================== I2S MIC ======================
 void initI2SMic()
 {
     i2s_config_t i2s_config = {
@@ -52,15 +60,13 @@ void initI2SMic()
         .dma_buf_len = BUFFER_LEN,
         .use_apll = false,
         .tx_desc_auto_clear = false,
-        .fixed_mclk = 0
-    };
+        .fixed_mclk = 0};
 
     i2s_pin_config_t pin_config = {
         .bck_io_num = I2S_MIC_SCK,
         .ws_io_num = I2S_MIC_WS,
         .data_out_num = I2S_PIN_NO_CHANGE,
-        .data_in_num = I2S_MIC_SD
-    };
+        .data_in_num = I2S_MIC_SD};
 
     i2s_driver_install(I2S_MIC_PORT, &i2s_config, 0, NULL);
     i2s_set_pin(I2S_MIC_PORT, &pin_config);
@@ -83,14 +89,21 @@ void taskMicStream(void *pvParameters)
             vTaskDelay(200 / portTICK_PERIOD_MS);
         }
 
-        if (currentScreen != SCREEN_MAIN || !micStreaming || wifiStatus != WIFI_CONNECTED)
+        if ((currentScreen != SCREEN_DEV && currentScreen != SCREEN_START) ||
+            !micStreaming ||
+            wifiStatus != WIFI_CONNECTED)
         {
             vTaskDelay(50 / portTICK_PERIOD_MS);
             continue;
         }
 
         size_t bytes_read = 0;
-        esp_err_t result = i2s_read(I2S_MIC_PORT, i2sBuffer, sizeof(i2sBuffer), &bytes_read, portMAX_DELAY);
+        esp_err_t result = i2s_read(
+            I2S_MIC_PORT,
+            i2sBuffer,
+            sizeof(i2sBuffer),
+            &bytes_read,
+            portMAX_DELAY);
 
         if (result != ESP_OK || bytes_read == 0)
         {
@@ -133,18 +146,27 @@ void taskMicStream(void *pvParameters)
 
         enqueueUDPAudio(packet, sizeof(AudioHeader) + samples * 2);
 
-        if (currentScreen == SCREEN_MAIN)
+        if (currentScreen == SCREEN_DEV)
         {
-            drawVolumeBar(maxVolume);
+            updateVolumeLevel(maxVolume);
 
             if (millis() - lastPrint > 800)
             {
                 lastPrint = millis();
                 char logMsg[100];
-                snprintf(logMsg, sizeof(logMsg), "Queued seq=%lu smp=%d peak=%d",
-                         (unsigned long)header.sequence, samples, maxVolume);
+                snprintf(
+                    logMsg,
+                    sizeof(logMsg),
+                    "Queued seq=%lu smp=%d peak=%d",
+                    (unsigned long)header.sequence,
+                    samples,
+                    maxVolume);
                 drawLog(logMsg);
             }
+        }
+        else if (currentScreen == SCREEN_START)
+        {
+            updateStartAudioLevel(maxVolume, AUDIO_BAR_MIC);
         }
 
         vTaskDelay(1 / portTICK_PERIOD_MS);
@@ -160,14 +182,19 @@ void taskTouch(void *pvParameters)
 
         if (getTouchPoint(x, y))
         {
-            if (currentScreen == SCREEN_CONFIG)
+            if (currentScreen == SCREEN_SETUP)
             {
                 handleConfigTouch(x, y);
+            }
+            else if (currentScreen == SCREEN_START)
+            {
+                handleStartTouch(x, y);
             }
             else
             {
                 handleMainTouch(x, y);
             }
+
             waitTouchRelease();
         }
 
@@ -175,20 +202,19 @@ void taskTouch(void *pvParameters)
     }
 }
 
-void printResetReason()
-{
-    esp_reset_reason_t reason = esp_reset_reason();
-    Serial.printf("Reset reason: %d\n", (int)reason);
-}
 // ====================== SETUP ======================
 void setup()
 {
     Serial.begin(115200);
 
+    screenMutex = xSemaphoreCreateMutex();
+
     pinMode(21, OUTPUT);
     digitalWrite(21, HIGH);
     delay(100);
+
     printResetReason();
+
     initDisplayHardware();
     initTouchHardware();
     delay(100);
@@ -206,11 +232,10 @@ void setup()
     CURRENT_STAGE = 0;
     currentTitle = getStageTitle(CURRENT_STAGE);
     inputText = loadStageValue(0);
-    currentScreen = SCREEN_CONFIG;
-    drawConfigScreenNoMutex();
-    delay(300);
 
-    screenMutex = xSemaphoreCreateMutex();
+    currentScreen = SCREEN_START;
+    drawStartUI();
+    delay(300);
 
     udpAudioQueue = xQueueCreate(20, sizeof(UdpPacket_t));
     udpControlQueue = xQueueCreate(10, sizeof(UdpPacket_t));
@@ -221,19 +246,26 @@ void setup()
     }
 
     initI2SOut();
-    Serial.println("I2S Out initialized");
     resetPlaybackBuffer();
-    Serial.println("Playback buffer reset");
+    resetOutputPacketJitter();
 
+    if (!initOutputOpus())
+    {
+        Serial.println("Failed to init output Opus decoder");
+    }
+
+    connectWiFi();
+
+    xTaskCreatePinnedToCore(taskVolumeUI, "VolumeUI", 4096, nullptr, 1, nullptr, 1);
+    xTaskCreatePinnedToCore(taskStartUI, "StartUI", 4096, nullptr, 1, nullptr, 1);
     xTaskCreatePinnedToCore(taskTouch, "TouchTask", 6144, NULL, 1, NULL, 1);
     xTaskCreatePinnedToCore(taskMicStream, "MicStream", 8192, NULL, 2, NULL, 1);
-    xTaskCreatePinnedToCore(taskUDP, "UDPTask", 6144, NULL, 3, NULL, 1);
-    xTaskCreatePinnedToCore(taskAudioPlayback, "AudioPlayback", 4096, NULL, 2, NULL, 1);
+    xTaskCreatePinnedToCore(taskUDP, "UDPTask", 9144, NULL, 4, NULL, 1);
+    xTaskCreatePinnedToCore(taskAudioPlayback, "AudioPlayback", 12288, NULL, 3, NULL, 1);
+    xTaskCreatePinnedToCore(udpRxTask, "UdpRx", 4096, NULL, 3, NULL, 1);
     Serial.println("System ready");
 }
 
-// ====================== LOOP ======================
 void loop()
 {
-    // Everything runs in FreeRTOS tasks
 }
